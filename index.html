@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตรวจสอบผู้รับจ้าง TDRI CUSRI IPSR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: header + tab bar, then one panel per view; evidence encoded as solid / outlined / empty marks */
+:root{
+  --ink:#13281c; --muted:#557062; --paper:#f3f8f4; --card:#ffffff; --line:#d3e4d8;
+  --accent:#13804a; --accent-soft:#e2f4e8; --band:#e9f6ed;
+  --ok:#0f6e3d; --ok-bg:#dcf2e3; --cond:#9a6200; --cond-bg:#fbf0d9; --none:#8a9a90; --none-bg:#eef3ef;
+  --display:"Bai Jamjuree","IBM Plex Sans Thai",system-ui,sans-serif;
+  --body:"IBM Plex Sans Thai",system-ui,"Noto Sans Thai",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#e3f1e7; --muted:#97b3a2; --paper:#0c1610; --card:#13221a; --line:#25402f;
+  --accent:#5fd18f; --accent-soft:#183a27; --band:#112a1c;
+  --ok:#6fd3a0; --ok-bg:#163527; --cond:#f0bf63; --cond-bg:#3a2e14; --none:#7d8f84; --none-bg:#18271e;
+  color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --ink:#e3f1e7; --muted:#97b3a2; --paper:#0c1610; --card:#13221a; --line:#25402f;
+  --accent:#5fd18f; --accent-soft:#183a27; --band:#112a1c;
+  --ok:#6fd3a0; --ok-bg:#163527; --cond:#f0bf63; --cond-bg:#3a2e14; --none:#7d8f84; --none-bg:#18271e;
+  color-scheme:dark;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:15px/1.6 var(--body)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header{background:var(--card);border-bottom:1px solid var(--line)}
+header .wrap{padding-top:22px;padding-bottom:14px;display:grid;gap:6px}
+h1{font:700 26px/1.25 var(--display);margin:0;text-wrap:balance}
+h2{font:600 19px/1.3 var(--display);margin:0 0 12px;text-wrap:balance}
+h3{font:600 16px/1.3 var(--display);margin:0}
+.sub{color:var(--muted);margin:0;max-width:75ch}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto}
+nav a{padding:12px 14px;text-decoration:none;color:var(--muted);font-weight:500;white-space:nowrap;border-bottom:3px solid transparent}
+nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+main .wrap{padding-top:22px;padding-bottom:48px}
+section[hidden]{display:none}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:0 0 14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.mark{display:inline-block;width:12px;height:12px;border-radius:3px;flex:none}
+.m-ok{background:var(--ok)} .m-cond{background:transparent;border:2px solid var(--cond)} .m-none{background:var(--none-bg);border:1px dashed var(--none)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;font:500 14px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--card)}
+input[type=search]{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 12px;font:14px var(--body);min-width:220px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px;align-content:start}
+.card .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.kind{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 9px;white-space:nowrap}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--none-bg)}
+.bar i{display:block}
+.bar .b-ok{background:var(--ok)} .bar .b-cond{background:var(--cond)}
+.counts{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.dots{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.dot{display:flex;gap:6px;align-items:flex-start;font-size:12.5px;line-height:1.35;color:var(--muted);background:none;border:0;padding:2px;text-align:left;cursor:pointer;font-family:var(--body)}
+.dot .mark{margin-top:2px}
+.mwrap{position:fixed;inset:0;z-index:50;background:rgba(10,20,35,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.mwrap[hidden]{display:none}
+.mbox{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;width:100%;max-width:640px;max-height:min(88vh,900px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.mtop{position:sticky;top:0;display:flex;justify-content:flex-end;padding:10px 12px 0;background:var(--card)}
+.mx{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;font:500 14px var(--body);cursor:pointer;min-height:36px}
+#mBody{padding:0 20px 20px}
+#mBody ul{margin:0;padding-left:20px}
+body.noscroll{overflow:hidden}
+#mtxMobile{display:none;gap:12px}
+.mdim{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.mdim h3{background:var(--accent);color:#fff;padding:9px 14px;font-size:15px}
+.mdim ul{list-style:none;margin:0;padding:0}
+.mdim li{display:grid;grid-template-columns:84px 1fr;gap:10px;padding:10px 14px;border-top:1px solid var(--line);align-items:start}
+.mdim li:first-child{border-top:0}
+.ment{font-weight:600;font-size:14px}
+.mdim button{all:unset;cursor:pointer;color:var(--accent);display:grid;gap:2px;min-height:28px}
+.mdim button .cellsum{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.mdim .nil{text-align:left}
+@media (max-width:700px){
+  #mtxWrap{display:none}
+  #mtxMobile{display:grid}
+  .mwrap{align-items:flex-end;padding:0}
+  .mbox{max-width:none;border-radius:16px 16px 0 0;max-height:90vh;padding-bottom:env(safe-area-inset-bottom)}
+}
+.ocgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.oc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:grid;gap:12px;align-content:start}
+.ochead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ocname{all:unset;cursor:pointer;font:700 26px var(--display);color:var(--accent)}
+.ocname:hover{text-decoration:underline;text-underline-offset:4px}
+.ocstrength{all:unset;cursor:pointer;font:600 18px/1.4 var(--display);color:var(--ink);padding-bottom:12px;border-bottom:1px solid var(--line)}
+.oclist{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.oclist button{all:unset;box-sizing:border-box;cursor:pointer;width:100%;display:grid;grid-template-columns:160px 1fr;gap:10px;padding:4px 0;font-size:15px;border-radius:4px}
+.oclist button:hover .ocv{text-decoration:underline;text-underline-offset:3px}
+.ocname:focus-visible,.ocstrength:focus-visible,.oclist button:focus-visible{outline:2px solid var(--accent)}
+.ock{color:var(--muted)}
+.ocrow{display:grid;grid-template-columns:160px 1fr;gap:10px;padding:4px 0;font-size:15px}
+.ocv.nil{color:var(--muted);font-weight:400;text-align:left}
+.condtag{display:inline-block;font-size:11.5px;font-weight:600;color:var(--cond);background:var(--cond-bg);border-radius:999px;padding:0 8px;margin-left:4px;vertical-align:1px}
+@media (max-width:520px){.ocrow{grid-template-columns:1fr;gap:0}}
+.ocv{color:var(--ink);font-weight:500}
+.ocnote{font-size:13.5px;color:var(--cond);background:var(--cond-bg);border-radius:6px;padding:7px 12px}
+@media (max-width:520px){.oclist button{grid-template-columns:1fr;gap:0;padding:6px 0}.ocgrid{grid-template-columns:1fr}}
+header{background:var(--band);border-bottom:3px solid var(--accent)}
+.hwrap{display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px}
+.htext{display:grid;gap:6px}
+h1{color:var(--accent)}
+.mascot{width:220px;height:auto;mix-blend-mode:multiply;justify-self:end}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .mascot{mix-blend-mode:normal;background:#fff;border-radius:16px;padding:4px}}
+:root[data-theme="dark"] .mascot{mix-blend-mode:normal;background:#fff;border-radius:16px;padding:4px}
+nav a[aria-current="page"]{color:var(--accent)}
+.chip[aria-pressed="true"]{color:#fff}
+@media (max-width:620px){.hwrap{grid-template-columns:1fr 110px}.mascot{width:110px}h1{font-size:21px}}
+.banner{background:var(--cond-bg);color:var(--ink);border:1px solid var(--line);border-left:5px solid var(--cond);border-radius:10px;padding:10px 14px;font-size:14px;margin-bottom:16px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:22px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:2px}
+.tl1{font-size:13px;color:var(--muted)} .tl2{font:700 22px var(--display);color:var(--accent);font-variant-numeric:tabular-nums} .tl3{font-size:12.5px;color:var(--muted)}
+.h2note{font:400 13px var(--body);color:var(--muted);margin-left:6px}
+.insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.ins{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:14px 16px}
+.ins p{margin:6px 0 0;font-size:14px}
+#mtx td button{flex-direction:column;gap:0}
+#mBody .kind{justify-self:start}
+.cellsum{display:block}
+.orgbtn{all:unset;cursor:pointer;color:inherit;font:inherit;border-bottom:1px dashed currentColor}
+.orgbtn:focus-visible{outline:2px solid #fff}
+.mdim .orgbtn{color:var(--ink);font-weight:600;font-size:14px;align-self:start}
+.refline{display:block;font-size:11.5px;color:var(--muted);text-decoration:none;margin-top:3px}
+dialog#modal{border:1px solid var(--line);border-radius:12px;padding:20px;max-width:640px;width:calc(100% - 32px);background:var(--card);color:var(--ink)}
+dialog#modal::backdrop{background:rgba(10,20,35,.55)}
+#mBody{display:grid;gap:10px}
+#mBody h2{margin:4px 0 0} #mBody h3{margin-top:6px}
+.legal{background:var(--cond-bg);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.mworks{margin:0;padding-left:18px;display:grid;gap:8px;font-size:14px}
+.mfoot{display:flex;justify-content:flex-end;margin-top:14px}
+#logTable{min-width:600px} #logTable tbody th{width:220px}
+.ov{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.ovcard{all:unset;box-sizing:border-box;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0;display:flex;flex-direction:column;overflow:hidden}
+.ovcard:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(20,40,80,.08)}
+.ovcard:focus-visible{outline:2px solid var(--accent)}
+.ovtop{display:flex;justify-content:space-between;align-items:center;padding:18px 20px 0}
+.ovpill{font-size:12.5px;font-weight:600;border-radius:999px;padding:2px 12px;border:1px solid}
+.ovpill.inst{background:#e6f3fb;color:#0b5f8a;border-color:#b9dcf0}
+.ovpill.firm{background:#f2ecfb;color:#5b3a99;border-color:#d9c9f1}
+.ovcode{font:500 12.5px ui-monospace,Menlo,Consolas,monospace;color:var(--muted)}
+.ovname{font:700 20px/1.35 var(--display);color:var(--ink);padding:10px 20px 0}
+.ovsub{font-size:13.5px;color:var(--muted);padding:2px 20px 16px;border-bottom:1px solid var(--line)}
+.ovsec{display:grid;gap:8px;padding:16px 20px 0}
+.ovlbl{font-size:13px;color:var(--muted)}
+.ovtags{display:flex;flex-wrap:wrap;gap:6px}
+.ovtag{background:var(--accent-soft);color:var(--ink);font-size:13.5px;font-weight:500;border-radius:6px;padding:3px 10px}
+.ovrows{display:grid;gap:8px;margin:14px 20px 16px;padding-top:12px;border-top:1px solid var(--line);font-size:14px}
+.ovrow{display:grid;grid-template-columns:118px 1fr;gap:8px}
+.ovfoot{margin-top:auto;padding:12px 20px;background:var(--paper);border-top:1px solid var(--line);color:var(--accent);font-size:13.5px;font-weight:500}
+@media (max-width:520px){.ovrow{grid-template-columns:1fr;gap:0}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:10px;margin-bottom:16px}
+.prow{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:start}
+.plabel{font:600 14px var(--display);padding-top:6px}
+.panel .controls{margin:0}
+.chip.clear{border-style:dashed;color:var(--muted)}
+.result{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.result b{color:var(--ok)}
+.card{transition:opacity .2s}
+.card.faded{opacity:.45}
+.card.full{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok-bg)}
+.okcount b.sm{font-size:16px}
+.oklist li.hl .okrow{outline:2px solid var(--ok)}
+.chev{margin-left:auto;font:600 18px var(--display);color:var(--ok);line-height:1.2}
+.okdetail{padding:8px 10px 10px 32px;display:grid;gap:8px;font-size:14px}
+.okdetail ul{margin:0;padding-left:18px}
+.tomx{all:unset;cursor:pointer;color:var(--accent);font-size:13px;text-decoration:underline;text-underline-offset:3px;justify-self:start}
+.tomx:focus-visible{outline:2px solid var(--accent)}
+@media (max-width:620px){.prow{grid-template-columns:1fr}}
+.okcount{font-size:14px;color:var(--muted)}
+.okcount b{font:700 22px var(--display);color:var(--ok);margin-right:4px;font-variant-numeric:tabular-nums}
+.oklist{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.okrow{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:10px;align-items:flex-start;width:100%;padding:8px 10px;border-radius:8px;background:var(--ok-bg)}
+.okrow:hover{outline:1px solid var(--ok)}
+.okrow:focus-visible{outline:2px solid var(--accent)}
+.okrow .mark{margin-top:5px}
+.okrow>span{display:grid;gap:0}
+.okdim{font-size:12.5px;color:var(--muted)}
+.oksum{font-size:15px;font-weight:500;color:var(--ink)}
+.tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:900px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;font-size:13.5px}
+thead th{background:var(--accent);color:#fff;font:600 14px var(--display);position:sticky;top:0}
+tbody th{font-weight:600;width:170px;background:var(--accent-soft)}
+td button{all:unset;cursor:pointer;display:flex;gap:7px;align-items:flex-start;width:100%;line-height:1.4}
+td button:focus-visible{outline:2px solid var(--accent)}
+td button .mark{margin-top:3px}
+td .nil{color:var(--muted);display:block;text-align:center}
+td button{color:var(--accent);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+td button:hover{text-decoration-color:var(--accent)}
+td.sel{box-shadow:inset 0 0 0 2px var(--accent)}
+.detail{margin-top:16px;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:10px;padding:16px;display:grid;gap:8px}
+.detail.st-ok{border-left-color:var(--ok)} .detail.st-cond{border-left-color:var(--cond)} .detail.st-none{border-left-color:var(--none)}
+.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:1px 10px}
+.p-ok{background:var(--ok-bg);color:var(--ok)} .p-cond{background:var(--cond-bg);color:var(--cond)} .p-none{background:var(--none-bg);color:var(--none)}
+.detail ul{margin:0;padding-left:20px}
+.ref{display:grid;gap:2px;font-size:13.5px}
+.ref .url{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--muted);word-break:break-all}
+.refs{display:grid;gap:10px}
+.tl{display:grid;gap:10px}
+#tlTable{min-width:820px}
+#tlTable th.yr{width:90px;font:700 18px var(--display);color:var(--accent);font-variant-numeric:tabular-nums}
+.tlcell{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.tlcell button{all:unset;cursor:pointer;color:var(--accent);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;line-height:1.4}
+.tlcell button:hover{text-decoration-color:var(--accent)}
+.tlcell button.on{font-weight:600;text-decoration-color:var(--accent)}
+.tlcell button:focus-visible{outline:2px solid var(--accent)}
+.tl-item{display:grid;grid-template-columns:70px 1fr;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.tl-year{font:700 20px var(--display);color:var(--accent);font-variant-numeric:tabular-nums}
+.tl-body{display:grid;gap:6px;min-width:0}
+.tl-head{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.tag{font-size:12px;border-radius:6px;padding:0 8px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.crow{display:grid;grid-template-columns:96px 1fr auto;gap:8px;align-items:start;padding:6px 0;border-top:1px solid var(--line);font-size:14px}
+.crow .lbl{color:var(--muted);font-size:13px}
+.crow .val{word-break:break-word}
+.crow .note{grid-column:2/4;color:var(--muted);font-size:12.5px;margin-top:-4px}
+.copy{border:1px solid var(--line);background:var(--card);color:var(--accent);border-radius:6px;padding:2px 10px;font:500 12.5px var(--body);cursor:pointer}
+.notes{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:10px;max-width:80ch}
+.notes p,.notes ul{margin:0}
+.empty{color:var(--muted);padding:12px}
+footer{color:var(--muted);font-size:12.5px;padding:20px 0 40px;border-top:1px solid var(--line)}
+@media (max-width:520px){
+  .dots{grid-template-columns:repeat(2,1fr)}
+  .tl-item{grid-template-columns:1fr;gap:4px}
+  .crow{grid-template-columns:64px 1fr}
+  .crow .copy{grid-column:2}
+  .cards,.contact-grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+body{background:#0a4a24}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:#0a4a24 url("bg.webp") center/cover no-repeat}
+header{background:transparent!important;border-bottom:0!important}
+header h1{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+header .sub{color:#d6efdf!important}
+.mascot{mix-blend-mode:normal!important;background:none!important;padding:0!important;filter:drop-shadow(0 6px 12px rgba(0,0,0,.25))}
+nav{background:rgba(255,255,255,.96);backdrop-filter:blur(6px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) nav{background:rgba(19,34,26,.95)}}
+:root[data-theme="dark"] nav{background:rgba(19,34,26,.95)}
+main .wrap{background:var(--paper);border-radius:16px;margin-top:20px;margin-bottom:24px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+footer{border-top:0;color:#d6efdf}
+footer .wrap{color:#d6efdf}
+@media (max-width:620px){main .wrap{border-radius:12px;margin-left:8px;margin-right:8px}}
+.mascot{position:relative;width:240px;aspect-ratio:1535/1024;filter:drop-shadow(0 6px 12px rgba(0,0,0,.25))}
+.mascot img{position:absolute;display:block}
+.m-base{inset:0;width:100%;height:100%}
+.m-legs{left:0;top:32.23%;width:28.01%;height:26.37%;transform-origin:69.8% 99%;animation:kick 1.1s ease-in-out infinite alternate}
+@keyframes kick{0%{transform:rotate(-7deg)}100%{transform:rotate(6deg)}}
+@media (prefers-reduced-motion:reduce){.m-legs{animation:none}}
+@media (max-width:620px){.mascot{width:120px}}
+
+/* ===== Professional green theme (overrides) ===== */
+:root{--ink:#10241a;--muted:#5b6f63;--paper:#f5f7f6;--card:#ffffff;--line:#e1e8e3;--accent:#0b6b3a;--accent-dark:#074b29;--accent-soft:#e9f4ee;--ok:#0b6b3a;--ok-bg:#e3f2e9;
+  --display:"Anuphan","IBM Plex Sans Thai",system-ui,sans-serif;--body:"IBM Plex Sans Thai",system-ui,sans-serif;--shadow:0 1px 2px rgba(16,36,26,.06),0 6px 20px rgba(16,36,26,.05)}
+body{background:var(--paper)!important;font-size:15px}
+body::before{display:none!important}
+header{position:relative;background:var(--accent-dark) url("bg2.webp") center 18%/cover no-repeat!important;border-bottom:0!important;overflow:hidden}
+header::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,45,24,.55) 0%,rgba(5,45,24,.25) 55%,rgba(5,45,24,0) 100%)}
+header .wrap{position:relative;z-index:1;padding-top:28px!important;padding-bottom:22px!important}
+header h1{font:700 28px/1.25 var(--display)!important;color:#fff!important;text-shadow:none!important;letter-spacing:.1px}
+header .sub{color:rgba(255,255,255,.82)!important;font-size:14px;max-width:62ch}
+.eyebrow{display:inline-block;font:600 12px var(--body);letter-spacing:.6px;text-transform:uppercase;color:#bfe6cf;margin-bottom:2px}
+.mascot{width:230px!important;filter:drop-shadow(0 10px 18px rgba(0,0,0,.35))!important}
+nav{background:#fff!important;backdrop-filter:none!important;border-bottom:1px solid var(--line)!important;box-shadow:0 1px 0 rgba(16,36,26,.03)}
+nav .wrap{gap:2px!important}
+nav a{padding:14px 14px!important;font-weight:500;color:var(--muted)!important;border-bottom:3px solid transparent!important}
+nav a:hover{color:var(--ink)!important}
+nav a[aria-current="page"]{color:var(--accent)!important;border-bottom-color:var(--accent)!important;font-weight:600}
+main .wrap{background:none!important;box-shadow:none!important;border-radius:0!important;margin-top:0!important;margin-bottom:0!important;padding-top:28px!important}
+h2{font:700 20px/1.3 var(--display)!important;color:var(--ink)}
+.h2note{display:block;margin:4px 0 0!important;font-size:13.5px}
+.sub{color:var(--muted)}
+.controls{gap:0!important;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px;display:inline-flex!important;margin-bottom:18px!important}
+.chip{border:0!important;border-radius:8px!important;background:transparent!important;color:var(--muted)!important;padding:7px 16px!important;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--accent)!important;color:#fff!important;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.ocgrid{gap:18px!important}
+.oc{border:1px solid var(--line)!important;border-radius:14px!important;box-shadow:var(--shadow);padding:0!important;gap:0!important;overflow:hidden}
+.ochead{padding:18px 22px 6px}
+.ocname{font:700 24px var(--display)!important;color:var(--accent-dark)!important}
+.ochead .kind{background:var(--accent-soft);border-color:transparent;color:var(--accent);font-weight:600}
+.ocstrength{padding:0 22px 16px!important;font:500 16px/1.45 var(--body)!important;color:var(--ink)!important;border-bottom:1px solid var(--line)!important}
+.oclist{padding:6px 22px 10px!important;gap:0!important}
+.oclist li{border-bottom:1px dashed var(--line)}
+.oclist li:last-child{border-bottom:0}
+.oclist button,.ocrow{grid-template-columns:150px 1fr!important;padding:9px 0!important;font-size:14px!important}
+.ock{color:var(--muted);font-size:13.5px}
+.ocv{font-weight:500}
+.oclist button:hover{background:var(--accent-soft)}
+.ocnote{margin:0 22px 20px;border-radius:8px!important;border-left:3px solid var(--cond);padding:9px 12px!important;font-size:13px!important}
+.condtag{font-size:11px!important}
+.tablewrap{border:1px solid var(--line)!important;border-radius:14px!important;box-shadow:var(--shadow);background:#fff}
+thead th{background:var(--accent-dark)!important;color:#fff!important;font:600 14px var(--display)!important;padding:12px!important}
+tbody th{background:#f3f7f4!important;font-weight:600;color:var(--ink)}
+tbody tr:nth-child(even) td{background:#fbfcfb}
+th,td{border-bottom:1px solid var(--line)!important}
+.refline{color:var(--muted)!important}
+.mdim{box-shadow:var(--shadow);border-radius:12px!important}
+.mdim h3{background:var(--accent-dark)!important}
+.tl-item,.card,.notes{box-shadow:var(--shadow);border-radius:14px!important}
+.mbox{border-radius:16px!important;box-shadow:0 24px 60px rgba(5,30,16,.35)!important}
+.mx{border-color:var(--line)!important}
+footer{background:var(--accent-dark);color:rgba(255,255,255,.75)!important;border-top:0!important;padding:22px 0 30px!important;margin-top:20px}
+footer .wrap{color:rgba(255,255,255,.75)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e3f1e7;--muted:#9bb5a5;--paper:#0d1611;--card:#14221a;--line:#24382c;--accent:#5fd18f;--accent-soft:#183a27}
+  :root:not([data-theme="light"]) nav,:root:not([data-theme="light"]) .controls,:root:not([data-theme="light"]) .tablewrap{background:var(--card)!important}
+  :root:not([data-theme="light"]) tbody th{background:#18291f!important} :root:not([data-theme="light"]) tbody tr:nth-child(even) td{background:#122019}}
+nav .wrap{scrollbar-width:none}nav .wrap::-webkit-scrollbar{display:none}
+@media (max-width:620px){.chip{white-space:nowrap;padding:7px 8px!important;font-size:13.5px}header h1{font-size:21px!important}.mascot{width:118px!important}.controls{display:flex!important;width:100%}.chip{flex:1}.oclist button,.ocrow{grid-template-columns:1fr!important;padding:8px 0!important}}
+
+.detail,.detail.st-ok,.detail.st-cond,.detail.st-none{border-left:1px solid var(--line)!important;box-shadow:var(--shadow);border-radius:14px}
+.lid{position:absolute;background:#f3f9f6;border-radius:50%;border-bottom:2px solid #1d1d1d;transform:scaleY(0);transform-origin:50% 0;animation:blink 4.2s infinite;box-sizing:border-box}
+.lid-l{left:42.41%;top:46.39%;width:6.32%;height:11.91%}
+.lid-r{left:56.35%;top:41.41%;width:5.60%;height:11.43%}
+@keyframes blink{0%,90%,100%{transform:scaleY(0)}93%{transform:scaleY(1)}96%{transform:scaleY(0)}}
+@media (prefers-reduced-motion:reduce){.lid{animation:none}}
+
+.ocnote{border-left:0!important}
+.searchrow{display:flex;align-items:center;gap:10px;margin:0 0 16px;flex-wrap:wrap}
+.searchrow label{font-weight:600;color:var(--ink)}
+.searchrow input[type=search]{flex:1;max-width:420px;min-width:200px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 14px;font:14px var(--body);color:var(--ink)}
+.searchrow input[type=search]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.tablewrap,.mdim,.oc,.ovcard,.card,.tile,.ins,.panel,.tl-item,.notes,.detail{border-radius:0!important}
+.ki{width:14px;height:14px;fill:currentColor;flex:none;vertical-align:-2px;margin-right:5px}
+.kind,.chip{display:inline-flex;align-items:center}
+#tlTable th,#tlTable td,#mtx th,#mtx td{border-right:1px solid var(--line)}
+#tlTable th:last-child,#tlTable td:last-child,#mtx th:last-child,#mtx td:last-child{border-right:0}
+#tlTable thead th,#mtx thead th{border-right-color:rgba(255,255,255,.25)}
+.ocloc{display:flex;align-items:center;font-size:13.5px;color:var(--muted);padding:0 22px;margin-top:-4px}
+
+.cchart{display:grid;gap:8px;margin-top:4px}
+.ccrow{display:grid;grid-template-columns:78px 1fr 92px;align-items:center;gap:10px;font-size:14px}
+.cclbl{color:var(--muted)}
+.cctrack{height:14px;background:var(--none-bg,#eef1ef)}
+.ccbar{display:block;height:100%;background:#9cc9b0}
+.ccrow.cur .cclbl{color:var(--ink);font-weight:700}
+.ccrow.cur .ccbar{background:var(--accent)}
+.ccval{font-variant-numeric:tabular-nums;font-weight:600}
+.ccval small{font-weight:400;color:var(--muted)}
+.ccnote{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+.ccard{grid-column:span 2;padding:20px 22px!important}
+@media (max-width:760px){.ccard{grid-column:auto}}
+.cchead{margin:0 0 12px;font:600 17px var(--display)}
+
+.ccctl{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.ccseg{display:inline-flex;border:1px solid var(--line);background:#fff;padding:3px}
+.ccseg button{all:unset;cursor:pointer;padding:5px 12px;font-size:13px;color:var(--muted)}
+.ccseg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.ccseg button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.ccrow{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:grid;grid-template-columns:78px 1fr 92px;align-items:center;gap:10px;font-size:14px;width:100%;padding:5px 6px}
+.ccrow:hover,.ccrow:focus-visible,.ccrow.open{background:var(--accent-soft,#e8f3ec)}
+.ccrow:focus-visible{outline:2px solid var(--accent)}
+.cclbl{color:var(--ink);font-weight:600}
+.ccbar{display:block;height:100%;background:var(--accent);transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.ccrow:hover .ccbar,.ccrow.open .ccbar{background:var(--accent-dark,#074b29)}
+.cctip{display:none;grid-column:1/-1;font-size:13px;color:var(--ink);padding:4px 0 2px 88px;line-height:1.5}
+.cctip em{display:block;font-style:normal;color:var(--accent);font-size:12px}
+.ccrow:hover .cctip,.ccrow:focus-visible .cctip,.ccrow.open .cctip{display:block}
+@media (max-width:620px){.ccrow{grid-template-columns:70px 1fr 70px}.cctip{padding-left:0}}
+@media (prefers-reduced-motion:reduce){.ccbar{transition:none}}
+.dlbtn{justify-self:start;width:max-content;display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:8px 14px;background:#fff;color:var(--accent-dark);font:600 14px var(--body);text-decoration:none;border-radius:0}
+.dlbtn svg{width:16px;height:16px}
+.dlbtn:hover{background:#e8f3ec}
+.dlbtn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.dlbtn{border:0;cursor:pointer}
+.dlbtn[hidden],[data-dl][hidden]{display:none!important}
+.dllink{all:unset;cursor:pointer;color:#cfe9da;text-decoration:underline}
+</style>
+</head>
+<body>
+<header><div class="wrap hwrap">
+  <div class="htext">
+  <h1>รายชื่อสถาบันวิจัยหรือบริษัทที่ปรึกษาสำหรับโครงการ ORG กำลังคนฝ่าย IU6</h1>
+  <a class="dlbtn" href="TDRI_CUSRI_IPSR_DueDiligence_v10.docx" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4-4m4 4 4-4M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>ดาวน์โหลดรายงาน Word (v10)</a>
+  </div>
+  <div class="mascot" role="img" aria-label="มาสคอตจอสีเขียวกำลังแปะลิงก์บนแล็ปท็อป"><img class="m-legs" src="m_legs.webp" alt=""><img class="m-base" src="m_base.webp" alt=""><span class="lid lid-l"></span><span class="lid lid-r"></span></div>
+</div></header>
+<nav aria-label="ส่วนของหน้า"><div class="wrap">
+  <a href="#overview">ภาพรวม</a>
+  <a href="#matrix">มิติประเมิน 13 ด้าน</a>
+  <a href="#timeline">ผลงานรายปี</a>
+  <a href="#contacts">ข้อมูลติดต่อ</a>
+  <a href="#sources">แหล่งอ้างอิงทั้งหมด</a>
+</div></nav>
+<main><div class="wrap">
+
+<section id="v-overview">
+  <h2>สรุปรายหน่วยงาน <span class="h2note">แตะแต่ละข้อเพื่อดูหลักฐานและ URL แตะชื่อหน่วยงานเพื่อดูข้อมูลติดต่อและผลงาน</span></h2>
+  <div class="controls" role="group" aria-label="กรองประเภท">
+    <button class="chip" data-kind="all" aria-pressed="true">ทั้งหมด</button>
+    <button class="chip" data-kind="inst" aria-pressed="false"><svg class="ki" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8v2h20V8L12 3zM4 12v6h3v-6H4zm6.5 0v6h3v-6h-3zM17 12v6h3v-6h-3zM2 20v2h20v-2H2z"/></svg>สถาบันวิจัย</button>
+    <button class="chip" data-kind="firm" aria-pressed="false"><svg class="ki" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v4h20V9a2 2 0 0 0-2-2h-3V5a2 2 0 0 0-2-2H9zm0 2h6v2H9V5zM2 15v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4h-8v2h-4v-2H2z"/></svg>บริษัทที่ปรึกษา</button>
+  </div>
+  <div class="ocgrid" id="ocards"></div>
+</section>
+
+<section id="v-matrix" hidden>
+  <h2>มิติประเมิน 13 ด้าน</h2>
+  <p class="sub" style="margin-bottom:14px">แตะช่องเพื่อดูหลักฐานและ URL แตะชื่อหน่วยงานที่หัวตารางเพื่อดูข้อมูลติดต่อ สถานะนิติบุคคล และผลงาน เครื่องหมาย - หมายถึงค้นแล้วยังไม่พบหลักฐาน</p>
+  <div class="controls" role="group" aria-label="กรองประเภท">
+    <button class="chip" data-mkind="all" aria-pressed="true">ทั้งหมด</button>
+    <button class="chip" data-mkind="inst" aria-pressed="false"><svg class="ki" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8v2h20V8L12 3zM4 12v6h3v-6H4zm6.5 0v6h3v-6h-3zM17 12v6h3v-6h-3zM2 20v2h20v-2H2z"/></svg>สถาบันวิจัย</button>
+    <button class="chip" data-mkind="firm" aria-pressed="false"><svg class="ki" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v4h20V9a2 2 0 0 0-2-2h-3V5a2 2 0 0 0-2-2H9zm0 2h6v2H9V5zM2 15v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4h-8v2h-4v-2H2z"/></svg>บริษัทที่ปรึกษา</button>
+  </div>
+  <div class="tablewrap" id="mtxWrap"><table id="mtx"></table></div>
+  <div id="mtxMobile"></div>
+</section>
+
+<section id="v-timeline" hidden>
+  <h2>ผลงานและงานเผยแพร่รายปี</h2>
+  <p class="sub" style="margin-bottom:14px">แตะชื่องานเพื่อดูรายละเอียดและ URL เครื่องหมาย - หมายถึงไม่พบผลงานที่ยืนยันได้ในปีนั้น ไม่พบผลงานปี 2564 ที่ยืนยันได้ของทุกหน่วยงาน</p>
+  <div class="tablewrap"><table id="tlTable"></table></div>
+</section>
+
+<section id="v-contacts" hidden>
+  <h2>ข้อมูลติดต่อ</h2>
+  <div class="contact-grid" id="contacts"></div>
+</section>
+
+<section id="v-sources" hidden>
+  <h2>แหล่งอ้างอิงทั้งหมด</h2>
+  <div class="searchrow"><label for="q">ค้นหา</label><input type="search" id="q" placeholder="เช่น ILO, OECD, กระทรวงแรงงาน"></div>
+  <div class="tablewrap"><table id="srcTable"></table></div>
+</section>
+
+
+</div></main>
+<div id="modal" class="mwrap" hidden role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="mbox">
+    <div class="mtop"><button class="mx" id="mClose" aria-label="ปิดหน้าต่าง">✕ ปิด</button></div>
+    <div id="mBody"></div>
+  </div>
+</div>
+<footer><div class="wrap">ที่มา: รวบรวมจากแหล่งข้อมูลสาธารณะ ข้อมูล ณ วันที่ 11 พฤศจิกายน 2569 · <a class="dllink" href="TDRI_CUSRI_IPSR_DueDiligence_v10.docx" download>ดาวน์โหลดรายงาน Word</a></div></footer>
+
+<script>
+const D = {
+ "dims": [
+  "1. ประสบการณ์/จุดเด่น",
+  "2. ความร่วมมือต่างประเทศ",
+  "3. กระทรวงการต่างประเทศ",
+  "4. กระทรวงแรงงาน",
+  "5. หน่วยงานรัฐที่เคยร่วมงาน",
+  "6. ภาคเอกชน",
+  "7. อาจารย์/ผู้เชี่ยวชาญ",
+  "8. มหาวิทยาลัย",
+  "9. ภาคประชาสังคม",
+  "10. เคยช่วยองค์กรอื่นปรับโครงสร้าง",
+  "11. ความร่วมมือภาคอุตสาหกรรม",
+  "12. ลูกค้า/ผู้ว่าจ้าง",
+  "13. เคยออกแบบเส้นทางอาชีพ/สมรรถนะ"
+ ],
+ "ents": [
+  {
+   "name": "สถาบันวิจัยเพื่อการพัฒนาประเทศไทย (TDRI)",
+   "short": "TDRI",
+   "cells": [
+    {
+     "lines": [
+      "วิเคราะห์ตลาดแรงงานด้วย Big Data รายไตรมาสตั้งแต่ปี 2565 และด้วย LLM (ทุน บพค.)",
+      "งานนโยบายเศรษฐกิจ เช่น การศึกษา OECD และห่วงโซ่อุปทานอุตสาหกรรม"
+     ],
+     "links": [
+      {
+       "t": "ThaiPublica – STEM (ส.ค. 2568)",
+       "u": "https://thaipublica.org/2025/08/tdri-bigdata-stem-labour-market/"
+      }
+     ],
+     "sum": "Big Data แรงงาน, นโยบายเศรษฐกิจ",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ทุนศึกษาต่อ TDRI-Co-Creation Program ร่วมกับองค์กรระหว่างประเทศ เช่น JICA"
+     ],
+     "links": [
+      {
+       "t": "TDRI – Careers",
+       "u": "https://tdri.or.th/en/career-at-tdri/"
+      }
+     ],
+     "sum": "JICA",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "กระทรวงการต่างประเทศจ้างศึกษาความเหมาะสมในการเข้าเป็นสมาชิก OECD ปี 2565"
+     ],
+     "links": [
+      {
+       "t": "Policy Watch – OECD",
+       "u": "https://policywatch.thaipbs.or.th/article/investment-63"
+      }
+     ],
+     "sum": "จ้างศึกษา OECD (2565)",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "รายงานฉบับสมบูรณ์เสนอต่อกรมสวัสดิการและคุ้มครองแรงงาน ส.ค. 2558",
+      "หมายเหตุ: เป็นงานก่อนช่วง 2564–2569 ยังไม่พบงานในช่วงนี้"
+     ],
+     "links": [
+      {
+       "t": "รายงานทีดีอาร์ไอ (2558)",
+       "u": "https://tdri.or.th/wp-content/uploads/2018/04/wb134.pdf"
+      }
+     ],
+     "sum": "งานปี 2558 (เก่า)",
+     "st": "cond"
+    },
+    {
+     "lines": [
+      "บพค. (โครงการ LLM), กองทุนพัฒนาเทคโนโลยีเพื่อการศึกษา ศธ. (ปี 2561), สศอ. (ศึกษาห่วงโซ่อุปทาน 3 อุตสาหกรรม), สสส. (โครงการปี 2561)"
+     ],
+     "links": [
+      {
+       "t": "ThaiPublica – บพค.",
+       "u": "https://thaipublica.org/2024/11/tdri-big-data-stem-job-market-hot-skills-of-the-decade/"
+      },
+      {
+       "t": "PPTV – TDRI–สศอ.",
+       "u": "https://www.pptvhd36.com/news/Wealth/285968"
+      },
+      {
+       "t": "รายงานเสนอ สสส. (2561)",
+       "u": "https://tdri.or.th/wp-content/uploads/2023/11/2018_09_กลไกการประเมินผลกระทบทางสังคม-ระยะที่-1.pdf"
+      }
+     ],
+     "sum": "บพค., ศธ., สศอ., สสส.",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "โครงการกิโยตินกฎระเบียบตลาดทุน ทบทวนกระบวนงานของ SET (71 กระบวนงาน) และ ThaiBMA (53 กระบวนงาน) ฯลฯ",
+      "หมายเหตุ: ไม่ได้ยืนยันว่าหน่วยงานเหล่านี้เป็นผู้ว่าจ้าง"
+     ],
+     "links": [
+      {
+       "t": "InfoQuest – กิโยตินตลาดทุน",
+       "u": "https://www.infoquest.co.th/?p=476091"
+      }
+     ],
+     "sum": "ตลาดทุน (SET, ThaiBMA)",
+     "st": "cond"
+    },
+    {
+     "lines": [
+      "โครงการเสนอ สสส. ปี 2561 มีอาจารย์มหาวิทยาลัยเป็นที่ปรึกษา เช่น รศ. ดร.อ้อทิพย์ ราษฎร์นิยม และ ศ. ดร.วรเวศม์ สุวรรณระดา"
+     ],
+     "links": [
+      {
+       "t": "รายงานเสนอ สสส. (2561)",
+       "u": "https://tdri.or.th/wp-content/uploads/2023/11/2018_09_กลไกการประเมินผลกระทบทางสังคม-ระยะที่-1.pdf"
+      }
+     ],
+     "sum": "ดึงอาจารย์เป็นที่ปรึกษา",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน (TDRI เป็นมูลนิธิ ไม่ได้สังกัดมหาวิทยาลัย)"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ศึกษาห่วงโซ่อุปทานไทย 3 อุตสาหกรรม (ยานยนต์ เทคโนโลยีขั้นสูง อาหารแห่งอนาคต) ร่วมกับสำนักงานเศรษฐกิจอุตสาหกรรม (สศอ.)"
+     ],
+     "links": [
+      {
+       "t": "PPTV – TDRI–สศอ. ห่วงโซ่อุปทาน",
+       "u": "https://www.pptvhd36.com/news/Wealth/285968"
+      }
+     ],
+     "sum": "สศอ. (ห่วงโซ่อุปทาน 3 อุตสาหกรรม)",
+     "st": "ok"
+    },
+    {
+     "st": "ok",
+     "sum": "กต., บพค., สศอ., สสส.",
+     "lines": [
+      "กระทรวงการต่างประเทศ: จ้างศึกษาความเหมาะสมในการเข้าเป็นสมาชิก OECD (2565)",
+      "บพค.: ทุนโครงการวิเคราะห์ตลาดแรงงานด้วย LLM",
+      "สศอ.: ศึกษาห่วงโซ่อุปทาน 3 อุตสาหกรรม",
+      "สสส. และกองทุนพัฒนาเทคโนโลยีเพื่อการศึกษา ศธ.: โครงการปี 2561",
+      "กรมสวัสดิการและคุ้มครองแรงงาน: รายงานปี 2558 (งานเก่า)"
+     ],
+     "links": [
+      {
+       "t": "Policy Watch – OECD",
+       "u": "https://policywatch.thaipbs.or.th/article/investment-63"
+      },
+      {
+       "t": "ThaiPublica – บพค.",
+       "u": "https://thaipublica.org/2024/11/tdri-big-data-stem-job-market-hot-skills-of-the-decade/"
+      },
+      {
+       "t": "PPTV – TDRI–สศอ.",
+       "u": "https://www.pptvhd36.com/news/Wealth/285968"
+      },
+      {
+       "t": "รายงานเสนอ สสส. (2561)",
+       "u": "https://tdri.or.th/wp-content/uploads/2023/11/2018_09_กลไกการประเมินผลกระทบทางสังคม-ระยะที่-1.pdf"
+      },
+      {
+       "t": "รายงานทีดีอาร์ไอ (2558)",
+       "u": "https://tdri.or.th/wp-content/uploads/2018/04/wb134.pdf"
+      }
+     ]
+    },
+    {
+     "st": "none",
+     "sum": "",
+     "lines": [
+      "ยังไม่พบงานออกแบบเส้นทางอาชีพหรือกรอบสมรรถนะให้องค์กร งานที่พบเป็นการวิเคราะห์ทักษะตลาดแรงงานระดับประเทศ"
+     ],
+     "links": []
+    }
+   ]
+  },
+  {
+   "name": "สถาบันวิจัยสังคม จุฬาลงกรณ์มหาวิทยาลัย (CUSRI)",
+   "short": "CUSRI",
+   "cells": [
+    {
+     "lines": [
+      "งานวิจัยแรงงานนอกระบบและประกันสังคมมาตรา 40 เช่น สำรวจผู้ค้าหาบเร่แผงลอย 430 คน และสนทนากลุ่ม 15 คน"
+     ],
+     "links": [
+      {
+       "t": "CUSRI – รายงานแรงงานนอกระบบ",
+       "u": "https://cusri.chula.ac.th/wp-content/uploads/2022/12/รายงานฉบับสมบูรณ์-ปรับตัวแรงงาน.pdf"
+      }
+     ],
+     "sum": "แรงงานนอกระบบ, ประกันสังคม",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "WIEGO ร่วมกับ CUSRI และ HomeNet Thailand จัดทำข้อเสนอเชิงนโยบาย (WIEGO Policy Brief No. 31)",
+      "โครงการกรณีศึกษาการนำแรงงานนอกระบบเข้าระบบประกันสังคม (Universal Social Protection)"
+     ],
+     "links": [
+      {
+       "t": "CUSRI – WIEGO",
+       "u": "https://cusri.chula.ac.th/?p=8687"
+      },
+      {
+       "t": "CUSRI – Universal Social Protection",
+       "u": "https://cusri.chula.ac.th/?p=6399"
+      }
+     ],
+     "sum": "WIEGO",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน (มีงานวิจัยเรื่องประกันสังคม แต่ไม่พบว่ากระทรวงเป็นผู้ว่าจ้าง)"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "โครงการวิจัยเสริมสร้างความรอบรู้สุขภาพในองค์กรภาครัฐสำหรับข้าราชการ ร่วมกับกระทรวงเกษตรและสหกรณ์ โดยสถาบันเกษตราธิการ (จดหมายข่าว 2566)"
+     ],
+     "links": [
+      {
+       "t": "CUSRI – จดหมายข่าว 3/2566",
+       "u": "https://cusri.chula.ac.th/wp-content/uploads/2023/08/News-3.2566.pdf"
+      }
+     ],
+     "sum": "กระทรวงเกษตรฯ",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "หัวหน้าโครงการ: วิชยา โกมินทร์ และ ดร.บวร ทรัพย์สิงห์ (นักวิจัย CUSRI)"
+     ],
+     "links": [
+      {
+       "t": "CUSRI – โครงการ",
+       "u": "https://cusri.chula.ac.th/?p=6399"
+      }
+     ],
+     "sum": "นักวิจัยในสถาบัน",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "เป็นหน่วยงานในจุฬาลงกรณ์มหาวิทยาลัย (สถาบันวิจัยทางสังคมศาสตร์แห่งแรกของประเทศ)"
+     ],
+     "links": [
+      {
+       "t": "Chula – สถาบันวิจัยสังคม",
+       "u": "https://www.chula.ac.th/departments/social-research-institute/"
+      }
+     ],
+     "sum": "สังกัดจุฬาฯ",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "HomeNet Thailand (ร่วมจัดทำ WIEGO Policy Brief No. 31)"
+     ],
+     "links": [
+      {
+       "t": "CUSRI – WIEGO",
+       "u": "https://cusri.chula.ac.th/?p=8687"
+      }
+     ],
+     "sum": "HomeNet Thailand",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "st": "ok",
+     "sum": "กระทรวงเกษตรฯ (สถาบันเกษตราธิการ)",
+     "lines": [
+      "กระทรวงเกษตรและสหกรณ์ โดยสถาบันเกษตราธิการ: โครงการเสริมสร้างความรอบรู้สุขภาพในองค์กรภาครัฐ (จดหมายข่าว 2566)"
+     ],
+     "links": [
+      {
+       "t": "CUSRI – จดหมายข่าว 3/2566",
+       "u": "https://cusri.chula.ac.th/wp-content/uploads/2023/08/News-3.2566.pdf"
+      }
+     ]
+    },
+    {
+     "st": "none",
+     "sum": "",
+     "lines": [
+      "ยังไม่พบงานออกแบบเส้นทางอาชีพหรือกรอบสมรรถนะให้องค์กร"
+     ],
+     "links": []
+    }
+   ]
+  },
+  {
+   "name": "สถาบันวิจัยประชากรและสังคม มหาวิทยาลัยมหิดล (IPSR)",
+   "short": "IPSR",
+   "cells": [
+    {
+     "lines": [
+      "ประชากรศาสตร์ สังคมสูงวัย แรงงานดูแลผู้สูงอายุ แรงงานข้ามชาติ รายงานสุขภาพคนไทย และ Mahidol Population Gazette"
+     ],
+     "links": [
+      {
+       "t": "IPSR – Gazette 2026",
+       "u": "https://ipsr.mahidol.ac.th/wp-content/uploads/2026/01/Gazette2026TH.pdf"
+      }
+     ],
+     "sum": "ประชากร, สังคมสูงวัย, แรงงานดูแล",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "โครงการ Care Economy สนับสนุนโดย ILO (มิ.ย.–พ.ย. 2565)",
+      "การประชุมโครงการ Caring for Work (28 ก.ย. 2566) มีผู้แทน IOM และ ILO"
+     ],
+     "links": [
+      {
+       "t": "IPSR – Care Economy",
+       "u": "https://ipsr.mahidol.ac.th/?p=27401"
+      },
+      {
+       "t": "IPSR – Caring for Work 2566",
+       "u": "https://ipsr.mahidol.ac.th/en/?p=36210"
+      }
+     ],
+     "sum": "ILO, IOM",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ปลัดกระทรวงแรงงานกล่าวเปิดการประชุมนำเสนอผลโครงการ Care Economy",
+      "ผู้แทนกระทรวงแรงงานร่วมประชุมโครงการ Caring for Work (28 ก.ย. 2566)",
+      "หมายเหตุ: เป็นการร่วมประชุม ไม่ใช่หลักฐานว่ากระทรวงเป็นผู้ว่าจ้าง"
+     ],
+     "links": [
+      {
+       "t": "IPSR – Care Economy workshop",
+       "u": "https://ipsr.mahidol.ac.th/en/?p=30863"
+      },
+      {
+       "t": "IPSR – Caring for Work 2566",
+       "u": "https://ipsr.mahidol.ac.th/en/?p=36210"
+      }
+     ],
+     "sum": "ร่วมประชุม (ไม่ใช่ผู้ว่าจ้าง)",
+     "st": "cond"
+    },
+    {
+     "lines": [
+      "สสส. (ร่วมจัดทำรายงานสุขภาพคนไทย 2566)",
+      "กระทรวงสาธารณสุข (ร่วมประชุมโครงการ Caring for Work 2566)"
+     ],
+     "links": [
+      {
+       "t": "สุขภาพคนไทย 2566",
+       "u": "https://ipsr.mahidol.ac.th/wp-content/uploads/2023/04/ThaiHealth2566_update20230518.pdf"
+      },
+      {
+       "t": "IPSR – Caring for Work 2566",
+       "u": "https://ipsr.mahidol.ac.th/en/?p=36210"
+      }
+     ],
+     "sum": "สสส., สธ.",
+     "st": "cond"
+    },
+    {
+     "lines": [
+      "บริษัท ฟิลโทรน่า จำกัด: บริการวิชาการเรื่ององค์กรแห่งความสุข (Happinometer) เม.ย.–ก.ค. 2567",
+      "บริษัท ซีพี ออลล์ จำกัด (มหาชน): สำรวจภาพลักษณ์องค์กรด้าน CSR (งานก่อนช่วง 2564–2569)"
+     ],
+     "links": [
+      {
+       "t": "IPSR – โครงการ Filtrona",
+       "u": "https://ipsr.mahidol.ac.th/en/?p=4248"
+      },
+      {
+       "t": "IPSR – โครงการ CP All",
+       "u": "https://ipsr.mahidol.ac.th/en/research_type/research-project-en/page/38"
+      }
+     ],
+     "sum": "ฟิลโทรน่า, ซีพี ออลล์",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "Assoc. Prof. Dr. Sudarat Musikawong (หัวหน้าโครงการ Caring for Work)",
+      "ภูเบศร์ สมุทรจักร (หัวหน้าโครงการ Care Economy)"
+     ],
+     "links": [
+      {
+       "t": "IPSR – Caring for Work 2568",
+       "u": "https://ipsr.mahidol.ac.th/en/?p=53998"
+      },
+      {
+       "t": "IPSR – Care Economy",
+       "u": "https://ipsr.mahidol.ac.th/?p=27401"
+      }
+     ],
+     "sum": "อาจารย์ในสถาบัน",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "เป็นหน่วยงานในมหาวิทยาลัยมหิดล"
+     ],
+     "links": [
+      {
+       "t": "IPSR",
+       "u": "https://ipsr.mahidol.ac.th/"
+      }
+     ],
+     "sum": "สังกัดมหิดล",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน (งานที่ใกล้เคียงที่สุดคือบริการวิชาการเรื่ององค์กรแห่งความสุขให้บริษัท ฟิลโทรน่า)"
+     ],
+     "links": [
+      {
+       "t": "IPSR – โครงการ Filtrona",
+       "u": "https://ipsr.mahidol.ac.th/en/?p=4248"
+      }
+     ],
+     "sum": "ใกล้เคียง: องค์กรแห่งความสุข",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน (มีบริการวิชาการให้บริษัท ฟิลโทรน่า จำกัด ซึ่งนับไว้ในด้านภาคเอกชน)"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "st": "ok",
+     "sum": "ILO, ฟิลโทรน่า, ซีพี ออลล์",
+     "lines": [
+      "ILO: สนับสนุนโครงการ Care Economy (มิ.ย.–พ.ย. 2565)",
+      "บริษัท ฟิลโทรน่า จำกัด: บริการวิชาการเรื่ององค์กรแห่งความสุข (เม.ย.–ก.ค. 2567)",
+      "บริษัท ซีพี ออลล์ จำกัด (มหาชน): สำรวจภาพลักษณ์องค์กรด้าน CSR (งานก่อนช่วง 2564–2569)"
+     ],
+     "links": [
+      {
+       "t": "IPSR – Care Economy",
+       "u": "https://ipsr.mahidol.ac.th/?p=27401"
+      },
+      {
+       "t": "IPSR – โครงการ Filtrona",
+       "u": "https://ipsr.mahidol.ac.th/en/?p=4248"
+      },
+      {
+       "t": "IPSR – โครงการ CP All",
+       "u": "https://ipsr.mahidol.ac.th/en/research_type/research-project-en/page/38"
+      }
+     ]
+    },
+    {
+     "st": "none",
+     "sum": "",
+     "lines": [
+      "ยังไม่พบงานออกแบบเส้นทางอาชีพหรือกรอบสมรรถนะให้องค์กรอื่น (ที่พบเป็นระบบภายในของสถาบันเอง)"
+     ],
+     "links": []
+    }
+   ]
+  },
+  {
+   "name": "Deloitte Thailand",
+   "short": "Deloitte",
+   "cells": [
+    {
+     "lines": [
+      "ทีม Human Capital และ Technology & Transformation ในไทย จัดทำ Thailand Digital Transformation Survey ต่อเนื่องเป็นปีที่ 6 (2569)"
+     ],
+     "links": [
+      {
+       "t": "Deloitte – Digital Transformation Survey 2026",
+       "u": "https://www.deloitte.com/southeast-asia/en/about/press-room/deloitte-thailand-digital-momentum-ai-payoff.html"
+      },
+      {
+       "t": "Deloitte – HC Trends Webinar 2024",
+       "u": "https://www2.deloitte.com/th/en/events/2024/global-human-capital-trends-webinar.html"
+      }
+     ],
+     "sum": "HR, Digital Transformation",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "เป็นส่วนหนึ่งของเครือข่าย Deloitte ทั่วโลก ในไทยมีหุ้นส่วนกว่า 50 คนและบุคลากรกว่า 1,400 คน"
+     ],
+     "links": [
+      {
+       "t": "Consultancy.asia",
+       "u": "https://www.consultancy.asia/news/5969/thailand-based-product-innovation-consultancy-appsynth-acquired-by-deloitte"
+      }
+     ],
+     "sum": "เครือข่ายทั่วโลก",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ร่วมกับกรุงเทพมหานครปรับปรุงสวนลุมพินี (ประกาศ 23 ก.ย. 2569)",
+      "หมายเหตุ: เป็นโครงการเพื่อสังคม ไม่ใช่งานที่ปรึกษา"
+     ],
+     "links": [
+      {
+       "t": "Deloitte – BMA Lumpini Park",
+       "u": "https://www.deloitte.com/southeast-asia/en/about/press-room/a-greener-more-connected-bangkok-deloitte-supports-bma-to-enhance-lumpini-park.html"
+      }
+     ],
+     "sum": "กทม. (โครงการเพื่อสังคม)",
+     "st": "cond"
+    },
+    {
+     "lines": [
+      "Prudential Thailand: งาน Digital Transformation ร่วมกับ Deloitte และ Salesforce (ตาม Client Spotlight ของบริษัท)"
+     ],
+     "links": [
+      {
+       "t": "Deloitte – Client Spotlight",
+       "u": "https://www2.deloitte.com/sg/en/pages/operations/articles/deloitte-client-spotlight-success-stories-case-studies.html"
+      }
+     ],
+     "sum": "Prudential Thailand",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "Thailand Digital Transformation Survey 2026 สำรวจผู้บริหารธุรกิจใน 6 อุตสาหกรรม",
+      "หมายเหตุ: เป็นงานสำรวจ ไม่ใช่ความร่วมมือกับองค์กรภาคอุตสาหกรรม"
+     ],
+     "links": [
+      {
+       "t": "Deloitte – Digital Transformation Survey 2026",
+       "u": "https://www.deloitte.com/southeast-asia/en/about/press-room/deloitte-thailand-digital-momentum-ai-payoff.html"
+      }
+     ],
+     "sum": "สำรวจ 6 อุตสาหกรรม (ไม่ใช่ความร่วมมือ)",
+     "st": "cond"
+    },
+    {
+     "st": "ok",
+     "sum": "Prudential Thailand",
+     "lines": [
+      "Prudential Thailand: งาน Digital Transformation ร่วมกับ Deloitte และ Salesforce (ตาม Client Spotlight ของบริษัท)"
+     ],
+     "links": [
+      {
+       "t": "Deloitte – Client Spotlight",
+       "u": "https://www2.deloitte.com/sg/en/pages/operations/articles/deloitte-client-spotlight-success-stories-case-studies.html"
+      }
+     ]
+    },
+    {
+     "st": "cond",
+     "sum": "มีทีม Human Capital (ไม่ระบุลูกค้า)",
+     "lines": [
+      "เอกสาร Human Capital Trends 2024 ของ Deloitte Consulting Ltd ประเทศไทย ระบุงานด้านโครงสร้างองค์กร Job Architecture Capability Model และ Career Development",
+      "ประกาศรับสมัครงานทีม Human Capital กรุงเทพฯ ระบุงานออกแบบระบบ HR การพัฒนาบุคลากร และการวางแผนสืบทอดตำแหน่ง",
+      "หมายเหตุ: เป็นบริการที่บริษัทระบุ ยังไม่พบชื่อลูกค้าในไทย"
+     ],
+     "links": [
+      {
+       "t": "Deloitte – Human Capital Trends 2024 (TH)",
+       "u": "https://www2.deloitte.com/content/dam/Deloitte/th/Documents/Events/th-human-capital-trends-2024-3.pdf"
+      },
+      {
+       "t": "Deloitte – Organization & Work Transformation (Bangkok)",
+       "u": "https://jobs.sea.deloitte.com/job/Bangkok-T&T-Senior-Consultant-Organization-&-Work-Transformation-Japanese-Client-Services-TH/1364322166/"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "PwC Thailand",
+   "short": "PwC",
+   "cells": [
+    {
+     "lines": [
+      "Digital HR Transformation (ข่าว 21 เม.ย. 2565) และการพัฒนาทักษะดิจิทัลของบุคลากร (ลงทุนประมาณ 9 ล้านบาท ประกาศ 27 ก.พ. 2568)"
+     ],
+     "links": [
+      {
+       "t": "PwC – Digital HR",
+       "u": "https://www.pwc.com/th/en/press-room/press-release/2022/press-release-21-04-22-th.html"
+      },
+      {
+       "t": "PwC – Digital Upskilling",
+       "u": "https://www.pwc.com/th/en/press-room/press-release/2025/press-release-27-02-25-th.html"
+      }
+     ],
+     "sum": "Digital HR, Upskilling",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "เป็นส่วนหนึ่งของเครือข่าย PwC ใน 151 ประเทศ"
+     ],
+     "links": [
+      {
+       "t": "PwC Thailand Transparency Report 2023",
+       "u": "https://www.pwc.com/th/en/audit-assurance/assets/pwc-thailand-transparency-report-2023.pdf"
+      }
+     ],
+     "sum": "เครือข่าย 151 ประเทศ",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "พันธมิตรเชิงกลยุทธ์กับ Microsoft (Thailand) ให้บริการที่ปรึกษา Digital Transformation (ข่าว 1 มี.ค. 2566)"
+     ],
+     "links": [
+      {
+       "t": "PwC – Microsoft Partner of the Year",
+       "u": "https://www.pwc.com/th/en/press-room/press-release/2023/press-release-01-03-23-en.html"
+      }
+     ],
+     "sum": "Microsoft (Thailand)",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "MoU กับมหาวิทยาลัยมหิดล ลงนาม 17 มี.ค. 2569 ส่งเสริมความร่วมมือทางวิชาการและพัฒนาบุคลากร",
+      "MoU กับหอการค้าไทยและมหาวิทยาลัยหอการค้าไทย 27 มิ.ย. 2567 ส่งผู้เชี่ยวชาญถ่ายทอดความรู้แก่ภาคธุรกิจและภาคการศึกษา"
+     ],
+     "links": [
+      {
+       "t": "PwC – MoU มหาวิทยาลัยมหิดล (2569)",
+       "u": "https://www.pwc.com/th/en/press-room/press-release/2026/press-release-09-04-26-en.html"
+      },
+      {
+       "t": "PwC – MoU หอการค้าไทย/ม.หอการค้าไทย (2567)",
+       "u": "https://www.pwc.com/th/en/press-room/press-release/2024/press-release-15-07-24-th.html"
+      }
+     ],
+     "sum": "MoU มหิดล (2569), ม.หอการค้าไทย (2567)",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ลงนาม MOU กับสภาอุตสาหกรรมแห่งประเทศไทย (ส.อ.ท.) 19 ส.ค. 2562 ให้คำแนะนำด้านการขยายตลาดและการลงทุนต่างประเทศแก่ผู้ประกอบการ",
+      "เป็นพันธมิตรเชิงกลยุทธ์จัดทำ Bangkok Business Summit White Paper กับคณะกรรมการร่วมภาคเอกชน 3 สถาบัน (กกร.) ปี 2569"
+     ],
+     "links": [
+      {
+       "t": "Post Today – ส.อ.ท. ผนึก 4 องค์กร (2562)",
+       "u": "https://www.posttoday.com/business/598063"
+      },
+      {
+       "t": "Asia News Network – Bangkok Business Summit 2026",
+       "u": "https://asianews.network/?p=304555"
+      }
+     ],
+     "sum": "ส.อ.ท. (MOU 2562), กกร. (2569)",
+     "st": "ok"
+    },
+    {
+     "st": "none",
+     "sum": "",
+     "lines": [
+      "ยังไม่พบชื่อลูกค้าที่ว่าจ้างโดยตรงจากแหล่งสาธารณะ",
+      "ที่พบเป็นคู่ความร่วมมือ ไม่ใช่ลูกค้า: Microsoft (Thailand), ส.อ.ท., กกร., ม.มหิดล, ม.หอการค้าไทย"
+     ],
+     "links": []
+    },
+    {
+     "st": "cond",
+     "sum": "มีทีม People & Organisation (ไม่ระบุลูกค้า)",
+     "lines": [
+      "ทีม People & Organisation ของ PwC Thailand ระบุงานออกแบบโครงสร้างองค์กร ระดับตำแหน่ง กลุ่มงาน กรอบสมรรถนะ และเส้นทางอาชีพ ให้ลูกค้า",
+      "รวมถึงการวางแผนกำลังคนเชิงกลยุทธ์และการจัดทำ Skills Taxonomy",
+      "หมายเหตุ: มาจากประกาศรับสมัครงานของบริษัท ยังไม่พบชื่อลูกค้า"
+     ],
+     "links": [
+      {
+       "t": "PwC – People & Organisation Transformation Consultant",
+       "u": "https://www.monster.co.th/job/people-organization-transformation-consultant-associate-senior-associate-pwc-south-east-asia-consulting-thailand-52667998"
+      },
+      {
+       "t": "PwC Thailand – Workforce strategy",
+       "u": "https://www.pwc.com/th/en/consulting/workforce-strategy.html"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "McKinsey & Company Thailand",
+   "short": "McKinsey",
+   "cells": [
+    {
+     "lines": [
+      "ให้คำปรึกษาด้านกลยุทธ์ การเติบโต การปฏิบัติการ และผลิตภาพ แก่บริษัทไทย บริษัทข้ามชาติ และหน่วยงานรัฐ (ตามเว็บไซต์บริษัท)"
+     ],
+     "links": [
+      {
+       "t": "McKinsey Thailand",
+       "u": "https://www.mckinsey.com/th"
+      }
+     ],
+     "sum": "กลยุทธ์, ผลิตภาพ",
+     "st": "cond"
+    },
+    {
+     "lines": [
+      "บริษัทระดับโลก สำนักงานกรุงเทพตั้งปี 2540"
+     ],
+     "links": [
+      {
+       "t": "McKinsey Thailand – Overview",
+       "u": "https://www.mckinsey.com/th/overview"
+      }
+     ],
+     "sum": "เครือข่ายทั่วโลก",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ร่วมกับรัฐบาลไทยจัดทำยุทธศาสตร์ฟื้นฟูการลงทุนหลังน้ำท่วมปี 2554 (pro bono ตามเว็บไซต์บริษัท ไม่ระบุหน่วยงาน)"
+     ],
+     "links": [
+      {
+       "t": "McKinsey Thailand – Overview",
+       "u": "https://www.mckinsey.com/th/overview"
+      }
+     ],
+     "sum": "รัฐบาล (น้ำท่วม 2554)",
+     "st": "cond"
+    },
+    {
+     "lines": [
+      "ระบุว่าทำงานกับบริษัทไทยและบริษัทข้ามชาติ แต่ไม่เปิดเผยชื่อลูกค้า"
+     ],
+     "links": [
+      {
+       "t": "McKinsey Thailand",
+       "u": "https://www.mckinsey.com/th"
+      }
+     ],
+     "sum": "ไม่เปิดเผยชื่อลูกค้า",
+     "st": "cond"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ค้นแล้วยังไม่พบหลักฐาน"
+     ],
+     "links": [],
+     "sum": "—",
+     "st": "none"
+    },
+    {
+     "lines": [
+      "ทำงานร่วมกับสภากาชาดไทย"
+     ],
+     "links": [
+      {
+       "t": "AmCham – McKinsey Thailand",
+       "u": "https://connect.amchamthailand.com/list/member/mckinsey-company-thailand-co-ltd-4477"
+      }
+     ],
+     "sum": "สภากาชาดไทย",
+     "st": "ok"
+    },
+    {
+     "lines": [
+      "ประเมินการดำเนินงานและโครงสร้างองค์กรของสภากาชาดไทย รวมถึงคณะกรรมการ (pro bono ตามเว็บไซต์บริษัท)"
+     ],
+     "links": [
+      {
+       "t": "McKinsey Thailand – Overview",
+       "u": "https://www.mckinsey.com/th/overview"
+      }
+     ],
+     "sum": "สภากาชาดไทย (pro bono)",
+     "st": "cond"
+    },
+    {
+     "lines": [
+      "ระบุว่าลูกค้าอยู่ในอุตสาหกรรมพลังงาน วัสดุพื้นฐาน เคมี การเงิน สินค้าอุปโภคบริโภค โทรคมนาคม และเทคโนโลยี (ตามเว็บไซต์บริษัท ไม่ระบุชื่อลูกค้า)"
+     ],
+     "links": [
+      {
+       "t": "McKinsey Thailand",
+       "u": "https://www.mckinsey.com/th"
+      }
+     ],
+     "sum": "ระบุกลุ่มอุตสาหกรรมลูกค้า (ไม่ระบุชื่อ)",
+     "st": "cond"
+    },
+    {
+     "st": "cond",
+     "sum": "สภากาชาดไทย (pro bono)",
+     "lines": [
+      "สภากาชาดไทย: ประเมินการดำเนินงานและโครงสร้างองค์กร (pro bono ตามเว็บไซต์บริษัท)",
+      "หมายเหตุ: บริษัทไม่เปิดเผยชื่อลูกค้าเชิงพาณิชย์ ระบุเพียงกลุ่มอุตสาหกรรม"
+     ],
+     "links": [
+      {
+       "t": "McKinsey Thailand – Overview",
+       "u": "https://www.mckinsey.com/th/overview"
+      }
+     ]
+    },
+    {
+     "st": "cond",
+     "sum": "พัฒนาผู้นำ/เสริมศักยภาพ (ไม่ระบุลูกค้า)",
+     "lines": [
+      "สำนักงานกรุงเทพฯ ระบุว่าเป็นที่รู้จักด้านโครงการพัฒนาผู้นำและเสริมสร้างศักยภาพ",
+      "หมายเหตุ: ยังไม่พบงานออกแบบเส้นทางอาชีพที่ระบุชื่อลูกค้าในไทย"
+     ],
+     "links": [
+      {
+       "t": "AmCham – McKinsey Thailand",
+       "u": "https://connect.amchamthailand.com/list/member/mckinsey-company-thailand-co-ltd-4477"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+};
+const X = {
+ "timeline": [
+  {
+   "e": "TDRI",
+   "y": "2565",
+   "t": "รายงาน Big Data ตลาดแรงงาน Q2/2565",
+   "d": "เผยแพร่ 21 ก.ค. 2565 ประกาศรับสมัครงาน 159,112 ตำแหน่ง",
+   "k": "งานวิจัย",
+   "u": "https://www.naewna.com/likesara/668661",
+   "s": "Big Data Q2/2565"
+  },
+  {
+   "e": "TDRI",
+   "y": "2565",
+   "t": "รายงาน Big Data ตลาดแรงงาน Q4/2565",
+   "d": "ประกาศรับสมัครงาน 163,829 ตำแหน่ง",
+   "k": "งานวิจัย",
+   "u": "https://marketeeronline.co/archives/305035",
+   "s": "Big Data Q4/2565"
+  },
+  {
+   "e": "TDRI",
+   "y": "2565",
+   "t": "การศึกษาความเหมาะสมในการเข้าเป็นสมาชิก OECD",
+   "d": "กระทรวงการต่างประเทศเป็นผู้ว่าจ้าง นำเสนอผล 6 ก.ย. 2565 สรุปว่าไทยได้ประโยชน์จากการเป็นสมาชิกเต็มรูปแบบมากกว่าไม่เป็นสมาชิก",
+   "k": "งานที่รัฐจ้าง",
+   "u": "https://policywatch.thaipbs.or.th/article/investment-63",
+   "s": "ศึกษา OECD (กต. จ้าง)"
+  },
+  {
+   "e": "TDRI",
+   "y": "2566",
+   "t": "รายงาน Big Data ตลาดแรงงาน Q2/2566",
+   "d": "ข่าว 26 ก.ค. 2566 ประกาศรับสมัครงาน 154,595 ตำแหน่ง ลดลง 13.2% จากไตรมาสก่อน ตำแหน่งงานกระจุกตัว",
+   "k": "งานวิจัย",
+   "u": "https://www.prachachat.net/hilight-prachachat/news-1356979",
+   "s": "Big Data Q2/2566"
+  },
+  {
+   "e": "TDRI",
+   "y": "2566",
+   "t": "รายงาน Big Data ตลาดแรงงาน Q4/2566",
+   "d": "เก็บข้อมูลจาก 15 เว็บไซต์หางาน",
+   "k": "งานวิจัย",
+   "u": "https://policywatch.thaipbs.or.th/article/economy-23",
+   "s": "Big Data Q4/2566"
+  },
+  {
+   "e": "TDRI",
+   "y": "2567",
+   "t": "รายงาน Big Data ตลาดแรงงาน Q1/2567",
+   "d": "ประกาศรับสมัครงาน 139,573 ตำแหน่ง วุฒิปริญญาตรีเป็นที่ต้องการมากที่สุด (เผยแพร่ มิ.ย. 2567)",
+   "k": "งานวิจัย",
+   "u": "https://thaipublica.org/2024/06/tdri-jobs-big-data-q1-2024/",
+   "s": "Big Data Q1/2567"
+  },
+  {
+   "e": "TDRI",
+   "y": "2568",
+   "t": "ระบบวิเคราะห์ข้อมูลด้วย LLM และรายงานแรงงาน STEM",
+   "d": "ใช้ LLM วิเคราะห์ประกาศงานจาก 23 เว็บไซต์ (ทุน บพค.) รายงาน STEM เผยแพร่ ส.ค. 2568 พบสาขาวิศวกรรมยังขาดแคลน",
+   "k": "งานวิจัย",
+   "u": "https://thaipublica.org/2025/08/tdri-bigdata-stem-labour-market/",
+   "s": "LLM และรายงาน STEM"
+  },
+  {
+   "e": "TDRI",
+   "y": "2569",
+   "t": "ผลศึกษาความเสี่ยงของแรงงานไทยจาก AI",
+   "d": "แรงงาน 2.2 ล้านคนใน 50 กลุ่มอาชีพเสี่ยง ความเสี่ยงสูงเป็นอันดับ 3 ในอาเซียน ฉากทัศน์รุนแรงสุดว่างงานอาจถึง 3.66% ค่าจ้างรวมลดได้ถึง 1%",
+   "k": "อ้างจากข่าว",
+   "u": "https://www.bangkokbiznews.com/economics/1258451",
+   "s": "ความเสี่ยงแรงงานจาก AI"
+  },
+  {
+   "e": "CUSRI",
+   "y": "2565",
+   "t": "การศึกษาการปรับตัวของแรงงานนอกระบบในกรุงเทพมหานคร",
+   "d": "วิจัยแบบผสานวิธี สำรวจผู้ค้าหาบเร่แผงลอย 430 คน และสนทนากลุ่ม 15 คน ปีที่ระบุคือปีที่เผยแพร่บนเว็บ CUSRI",
+   "k": "งานวิจัย",
+   "u": "https://cusri.chula.ac.th/wp-content/uploads/2022/12/รายงานฉบับสมบูรณ์-ปรับตัวแรงงาน.pdf",
+   "s": "แรงงานนอกระบบ (430 คน)"
+  },
+  {
+   "e": "CUSRI",
+   "y": "2567",
+   "t": "“I Want to be Protected” (WIEGO Policy Brief No. 31)",
+   "d": "เผยแพร่ ก.พ. 2567 ประสบการณ์ผู้ประกันตนมาตรา 40 จัดทำโดย WIEGO ร่วมกับ CUSRI และ HomeNet Thailand ไม่ใช่ผลงานของ CUSRI เพียงลำพัง",
+   "k": "งานร่วมต่างประเทศ",
+   "u": "https://wiego.org/publications/i-want-be-protected-experiences-and-perspectives-informal-workers-social-security",
+   "s": "WIEGO Policy Brief 31"
+  },
+  {
+   "e": "IPSR",
+   "y": "2566",
+   "t": "สุขภาพคนไทย 2566 (Thai Health Report 2023)",
+   "d": "IPSR จัดทำร่วมกับ สสส. เอกสารวิชาการหมายเลข 597 นำเสนอ 12 หมวดตัวชี้วัดปัจจัยสังคมกำหนดสุขภาพ",
+   "k": "งานวิจัย",
+   "u": "https://ipsr.mahidol.ac.th/wp-content/uploads/2023/04/ThaiHealth2566_update20230518.pdf",
+   "s": "สุขภาพคนไทย 2566"
+  },
+  {
+   "e": "IPSR",
+   "y": "2566",
+   "t": "โครงการ Caring for Work / Working for Care (ประชุม 28 ก.ย. 2566)",
+   "d": "การดูแลผู้สูงอายุระยะยาวโดยแรงงานไทยและข้ามชาติ มีผู้แทนกระทรวงสาธารณสุข กระทรวงแรงงาน IOM และ ILO ร่วมประชุม",
+   "k": "งานวิจัย",
+   "u": "https://ipsr.mahidol.ac.th/en/?p=36210",
+   "s": "Caring for Work (ประชุม 2566)"
+  },
+  {
+   "e": "IPSR",
+   "y": "2568",
+   "t": "โครงการ Caring for Work / Working for Care (ประชุม 25 ก.ย. 2568)",
+   "d": "หัวหน้าโครงการ Assoc. Prof. Dr. Sudarat Musikawong (IPSR)",
+   "k": "งานวิจัย",
+   "u": "https://ipsr.mahidol.ac.th/en/?p=53998",
+   "s": "Caring for Work (ประชุม 2568)"
+  },
+  {
+   "e": "IPSR",
+   "y": "2569",
+   "t": "Mahidol Population Gazette 2026",
+   "d": "ปีที่ 35 ม.ค. 2569 ประมาณการประชากรไทย ณ กลางปี 2569 รวม 65.48 ล้านคน",
+   "k": "งานเผยแพร่",
+   "u": "https://ipsr.mahidol.ac.th/wp-content/uploads/2026/01/Gazette2026TH.pdf",
+   "s": "Gazette 2026"
+  },
+  {
+   "e": "Deloitte",
+   "y": "2567",
+   "t": "2024 Global Human Capital Trends Webinar",
+   "d": "ทีม Human Capital ของ Deloitte Thailand จัดสัมมนาภาษาไทย 4 ครั้ง (ก.ค.–ส.ค. 2567) เอกสารระบุประเด็นไทยขาดแคลน Human Capital",
+   "k": "งานเผยแพร่ ไม่ใช่สัญญาจ้าง",
+   "u": "https://www2.deloitte.com/th/en/events/2024/global-human-capital-trends-webinar.html",
+   "s": "HC Trends Webinar 2024"
+  },
+  {
+   "e": "Deloitte",
+   "y": "2568",
+   "t": "2025 Global Human Capital Trends",
+   "d": "งานวิจัย “Turning Tensions into Triumphs” และบทความโดยผู้จัดการอาวุโส Deloitte Thailand ใน Nation Thailand (30 ก.ค. 2568)",
+   "k": "งานเผยแพร่ ไม่ใช่สัญญาจ้าง",
+   "u": "https://www.deloitte.com/southeast-asia/en/services/consulting/perspectives/2025-human-capital-trends.html",
+   "s": "HC Trends 2025"
+  },
+  {
+   "e": "PwC",
+   "y": "2565",
+   "t": "Digital HR Transformation",
+   "d": "ข่าว 21 เม.ย. 2565 อ้างผลสำรวจผู้บริหาร HR 67 คนใน 5 ประเทศ",
+   "k": "งานเผยแพร่ ไม่ใช่สัญญาจ้าง",
+   "u": "https://www.pwc.com/th/en/press-room/press-release/2022/press-release-21-04-22-th.html",
+   "s": "Digital HR"
+  },
+  {
+   "e": "PwC",
+   "y": "2568",
+   "t": "ลงทุน Digital Upskilling ประมาณ 9 ล้านบาท",
+   "d": "ประกาศ 27 ก.พ. 2568 พนักงานเกือบ 2,000 คนได้ฝึก GenAI และทักษะดิจิทัลตั้งแต่ปี 2563 ผลสำรวจภายในพบ 86% ว่า GenAI ช่วยเพิ่มประสิทธิภาพ เป็นการพัฒนาบุคลากรภายใน",
+   "k": "พัฒนาบุคลากรภายใน",
+   "u": "https://www.pwc.com/th/en/press-room/press-release/2025/press-release-27-02-25-th.html",
+   "s": "Digital Upskilling 9 ล้านบาท"
+  },
+  {
+   "e": "McKinsey",
+   "y": "2565",
+   "t": "Shaping the future of Thai banking",
+   "d": "รายงานเผยแพร่ 23 พ.ย. 2565 เสนอ 10 แนวทางสำหรับธนาคารไทย",
+   "k": "งานเผยแพร่ ไม่ใช่สัญญาจ้าง",
+   "u": "https://www.mckinsey.com/industries/financial-services/our-insights/shaping-the-future-of-thai-banking-reinventing-purpose-to-ignite-growth",
+   "s": "รายงานธนาคารไทย"
+  }
+ ],
+ "contacts": [
+  {
+   "e": "TDRI",
+   "full": "สถาบันวิจัยเพื่อการพัฒนาประเทศไทย",
+   "rows": [
+    [
+     "ทั่วไป",
+     "operator@tdri.or.th",
+     "สอบถามข้อมูลทั่วไป"
+    ],
+    [
+     "เสนอโครงการ",
+     "patcharee@tdri.or.th",
+     "เสนอโครงการวิจัย"
+    ],
+    [
+     "สมัครงาน",
+     "hr@tdri.or.th",
+     "สมัครงาน/ฝึกงาน"
+    ],
+    [
+     "สื่อสาร",
+     "kmteam@tdri.or.th",
+     "จัดการความรู้และสื่อสาร"
+    ],
+    [
+     "โทรศัพท์",
+     "02-718-5460",
+     ""
+    ],
+    [
+     "โทรสาร",
+     "02-718-5461-2",
+     ""
+    ],
+    [
+     "เว็บไซต์",
+     "https://tdri.or.th",
+     ""
+    ],
+    [
+     "ที่ตั้ง",
+     "565 ซอยรามคำแหง 39 (เทพลีลา) เขตวังทองหลาง กรุงเทพฯ 10310",
+     ""
+    ]
+   ],
+   "src": "https://tdri.or.th/en/contact/"
+  },
+  {
+   "e": "CUSRI",
+   "full": "สถาบันวิจัยสังคม จุฬาลงกรณ์มหาวิทยาลัย",
+   "rows": [
+    [
+     "อีเมล",
+     "Saraban_CUSRI@chula.ac.th",
+     ""
+    ],
+    [
+     "อีเมล",
+     "cusrimails@gmail.com",
+     ""
+    ],
+    [
+     "โทรศัพท์",
+     "02-218-7396",
+     ""
+    ],
+    [
+     "โทรศัพท์",
+     "02-218-7398",
+     ""
+    ],
+    [
+     "เว็บไซต์",
+     "https://cusri.chula.ac.th",
+     ""
+    ],
+    [
+     "ที่ตั้ง",
+     "ชั้น 4 และ 5 อาคารวิศิษฐ์ ประจวบเหมาะ จุฬาลงกรณ์มหาวิทยาลัย ถนนพญาไท แขวงวังใหม่ เขตปทุมวัน กรุงเทพฯ 10330",
+     ""
+    ]
+   ],
+   "src": "https://cusri.chula.ac.th/en/contact-us-en"
+  },
+  {
+   "e": "IPSR",
+   "full": "สถาบันวิจัยประชากรและสังคม มหาวิทยาลัยมหิดล",
+   "rows": [
+    [
+     "อีเมล",
+     "directpr@mahidol.ac.th",
+     ""
+    ],
+    [
+     "โทรศัพท์",
+     "02-441-0201 ถึง 0204",
+     ""
+    ],
+    [
+     "โทรสาร",
+     "02-441-9333",
+     ""
+    ],
+    [
+     "เว็บไซต์",
+     "https://ipsr.mahidol.ac.th",
+     ""
+    ],
+    [
+     "ที่ตั้ง",
+     "999 ถนนพุทธมณฑล สาย 4 ตำบลศาลายา อำเภอพุทธมณฑล จังหวัดนครปฐม 73170",
+     ""
+    ]
+   ],
+   "src": "https://ipsr.mahidol.ac.th/en/research_year/2025-en"
+  },
+  {
+   "e": "Deloitte",
+   "full": "Deloitte Thailand",
+   "rows": [
+    [
+     "นิติบุคคล",
+     "Deloitte Touche Tohmatsu Jaiyos Co., Ltd.",
+     "ตามประกาศรับสมัครงานของ Deloitte ต้องตรวจหนังสือรับรองก่อนทำสัญญา"
+    ],
+    [
+     "เว็บไซต์",
+     "https://www.deloitte.com/th",
+     ""
+    ],
+    [
+     "ที่ตั้ง",
+     "AIA Sathorn Tower ชั้น 22–27 เลขที่ 11/1 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพฯ 10120",
+     "ที่มา: https://www.deloitte.com/southeast-asia/en/about/thailand.html"
+    ],
+    [
+     "โทรศัพท์",
+     "+66 2 034 0000",
+     "ที่มา: หน้าเว็บ Deloitte Thailand"
+    ]
+   ],
+   "src": "https://jobs.sea.deloitte.com/job/Bangkok-T&T-Manager-Customer-Strategy-&-Design-(Go-To-Market)-TH/1359711866/"
+  },
+  {
+   "e": "PwC",
+   "full": "PwC Thailand",
+   "rows": [
+    [
+     "โทรศัพท์",
+     "+66 (0) 2844 1000",
+     "จากหน้าเว็บ PwC Thailand"
+    ],
+    [
+     "เว็บไซต์",
+     "https://www.pwc.com/th",
+     ""
+    ],
+    [
+     "ที่ตั้ง",
+     "Bangkok City Tower ชั้น 15 เลขที่ 179/74-80 ถนนสาทรใต้ เขตสาทร กรุงเทพฯ 10120 (ใกล้ BTS ช่องนนทรี)",
+     "ที่มา: https://pwc.com/th/en/about-us.html"
+    ]
+   ],
+   "src": "https://www.pwc.com/th/en/audit-assurance/pwc-transparency-report-2023.html"
+  },
+  {
+   "e": "McKinsey",
+   "full": "McKinsey & Company Thailand",
+   "rows": [
+    [
+     "นิติบุคคล",
+     "McKinsey & Company, Thailand Co., Ltd.",
+     "ชื่อสมาชิกใน AmCham Thailand ต้องตรวจหนังสือรับรองก่อนทำสัญญา"
+    ],
+    [
+     "เว็บไซต์",
+     "https://www.mckinsey.com/th",
+     ""
+    ],
+    [
+     "ที่ตั้ง",
+     "M. Thai Tower ชั้น 24 All Seasons Place เลขที่ 87 ถนนวิทยุ กรุงเทพฯ 10330",
+     "ที่มา: https://www.mckinsey.com/th/careers"
+    ]
+   ],
+   "src": "https://connect.amchamthailand.com/list/member/mckinsey-company-thailand-co-ltd-4477"
+  }
+ ],
+ "legal": {
+  "TDRI": {
+   "status": "มูลนิธิไม่แสวงหากำไร",
+   "note": "ต้องตรวจหนังสือรับรองมูลนิธิและผู้มีอำนาจลงนามก่อนทำสัญญา"
+  },
+  "CUSRI": {
+   "status": "หน่วยงานในจุฬาลงกรณ์มหาวิทยาลัย",
+   "note": "ต้องตรวจว่าลงนามในนามมหาวิทยาลัยหรือหน่วยงาน และผู้มีอำนาจลงนาม"
+  },
+  "IPSR": {
+   "status": "หน่วยงานในมหาวิทยาลัยมหิดล",
+   "note": "ต้องตรวจว่าลงนามในนามมหาวิทยาลัยหรือหน่วยงาน และผู้มีอำนาจลงนาม"
+  },
+  "Deloitte": {
+   "status": "Deloitte Touche Tohmatsu Jaiyos Co., Ltd.",
+   "note": "ชื่อตามประกาศรับสมัครงานของบริษัท ต้องตรวจหนังสือรับรองบริษัทก่อนทำสัญญา งานที่พบเป็นงานเผยแพร่ ต้องขอหนังสือรับรองผลงาน"
+  },
+  "PwC": {
+   "status": "PwC Thailand (ยังไม่ได้ตรวจชื่อนิติบุคคล)",
+   "note": "ต้องตรวจหนังสือรับรองบริษัทก่อนทำสัญญา งานที่พบเป็นงานเผยแพร่และการพัฒนาบุคลากรภายใน ต้องขอหนังสือรับรองผลงาน"
+  },
+  "McKinsey": {
+   "status": "McKinsey & Company, Thailand Co., Ltd.",
+   "note": "ชื่อตามรายชื่อสมาชิก AmCham Thailand ต้องตรวจหนังสือรับรองบริษัทก่อนทำสัญญา บริษัทไม่เปิดเผยชื่อลูกค้า ต้องขอผลงานที่อนุญาตให้เปิดเผย"
+  }
+ },
+ "log": [
+  [
+   "มิติประเมิน 11 ด้าน",
+   "เพิ่มด้านที่ 11 ความร่วมมือภาคอุตสาหกรรม และเพิ่มหลักฐาน MoU ของ PwC กับมหาวิทยาลัยมหิดล (2569) และมหาวิทยาลัยหอการค้าไทย (2567) ในด้านมหาวิทยาลัย"
+  ],
+  [
+   "อีเมล TDRI",
+   "ใส่อีเมล 4 ช่องทางตามหน้า Contact ของ TDRI: operator@ (ทั่วไป), hr@ (สมัครงาน), patcharee@ (เสนอโครงการวิจัย), kmteam@ (สื่อสาร) แก้ฉบับก่อนหน้าที่ถอดออกเพราะหาหน้า Contact ไม่พบ"
+  ],
+  [
+   "Deloitte / นิติบุคคล",
+   "ระบุ Deloitte Touche Tohmatsu Jaiyos Co., Ltd. ตามประกาศรับสมัครงานของบริษัท"
+  ],
+  [
+   "IPSR / เบอร์ 02-441-9666",
+   "ถอดออก เพราะหน้าเว็บปัจจุบันระบุเพียง 02-441-0201 ถึง 4"
+  ],
+  [
+   "TDRI / ปี 2569",
+   "ใช้ตัวเลขตามข่าวจริง (2.2 ล้านคน, 50 อาชีพ, ว่างงานอาจถึง 3.66%) แทนตัวเลขที่หาในข่าวไม่พบ"
+  ],
+  [
+   "CUSRI / WIEGO",
+   "ยืนยันเดือนเผยแพร่ ก.พ. 2567 และผู้เขียนร่วมจาก CUSRI"
+  ],
+  [
+   "PwC / Digital Upskilling",
+   "ตัดช่วงปี 2567–2571 เพราะข่าวภาษาอังกฤษระบุ 2–3 ปีข้างหน้า และใช้คำว่า เกือบ 2,000 คน ตามข่าว"
+  ],
+  [
+   "ข้อเสนอแนะการจัดซื้อจัดจ้าง",
+   "ถอดออกทั้งหัวข้อตามที่ผู้ใช้ขอ"
+  ]
+ ],
+ "cards": {
+  "TDRI": {
+   "pill": "มูลนิธิวิจัย",
+   "name": "สถาบันวิจัยเพื่อการพัฒนาประเทศไทย (TDRI)",
+   "sub": "มูลนิธิไม่แสวงหากำไร",
+   "tags": [
+    "Big Data ตลาดแรงงาน",
+    "LLM วิเคราะห์ตลาดงาน",
+    "นโยบายเศรษฐกิจ & OECD"
+   ],
+   "gov": "กต. (จ้างศึกษา OECD 2565), บพค., ศธ., สศอ., สสส.",
+   "lab": "Big Data ตลาดแรงงานรายไตรมาสตั้งแต่ 2565 (งานกับกระทรวงแรงงานที่พบเป็นปี 2558)"
+  },
+  "CUSRI": {
+   "pill": "สถาบันวิจัยมหาวิทยาลัย",
+   "name": "สถาบันวิจัยสังคม จุฬาฯ (CUSRI)",
+   "sub": "สถาบันวิจัยสังคม จุฬาลงกรณ์มหาวิทยาลัย",
+   "tags": [
+    "แรงงานนอกระบบ",
+    "ประกันสังคม ม.40",
+    "วิจัยผสานวิธี"
+   ],
+   "gov": "กระทรวงเกษตรฯ (สถาบันเกษตราธิการ)",
+   "lab": "WIEGO และ HomeNet Thailand (ยังไม่พบงานที่กระทรวงแรงงานจ้าง)"
+  },
+  "IPSR": {
+   "pill": "สถาบันวิจัยมหาวิทยาลัย",
+   "name": "สถาบันวิจัยประชากรและสังคม มหิดล (IPSR)",
+   "sub": "สถาบันวิจัยประชากรและสังคม มหาวิทยาลัยมหิดล",
+   "tags": [
+    "ประชากรศาสตร์",
+    "สังคมสูงวัย",
+    "Care Economy & แรงงานดูแล"
+   ],
+   "gov": "สสส., กระทรวงสาธารณสุข",
+   "lab": "Care Economy (ILO) และ Caring for Work (กระทรวงแรงงานร่วมประชุม ไม่ใช่ผู้ว่าจ้าง)"
+  },
+  "Deloitte": {
+   "pill": "บริษัทที่ปรึกษา",
+   "name": "Deloitte Thailand",
+   "sub": "Deloitte Touche Tohmatsu Jaiyos Co., Ltd.",
+   "tags": [
+    "Human Capital Trends",
+    "Digital Transformation Survey",
+    "สำรวจนโยบายเงินเดือน"
+   ],
+   "gov": "กทม. (โครงการเพื่อสังคม ไม่ใช่งานที่ปรึกษา)",
+   "lab": "ยังไม่พบ (มีผลสำรวจเงินเดือนในไทยปี 2568)"
+  },
+  "PwC": {
+   "pill": "บริษัทที่ปรึกษา",
+   "name": "PwC Thailand",
+   "sub": "PwC ประเทศไทย",
+   "tags": [
+    "Digital HR",
+    "Digital Upskilling",
+    "ผลสำรวจแรงงานไทย"
+   ],
+   "gov": "ยังไม่พบ",
+   "lab": "ยังไม่พบ (มีผลสำรวจแรงงานไทยปี 2566)"
+  },
+  "McKinsey": {
+   "pill": "บริษัทที่ปรึกษา",
+   "name": "McKinsey & Company Thailand",
+   "sub": "McKinsey & Company, Thailand Co., Ltd.",
+   "tags": [
+    "กลยุทธ์ & ผลิตภาพ",
+    "อนาคตธนาคารไทย",
+    "ประเมินโครงสร้างองค์กร (pro bono)"
+   ],
+   "gov": "รัฐบาลไทย หลังน้ำท่วม 2554 (pro bono)",
+   "lab": "ยังไม่พบ"
+  }
+ }
+};
+const KIND = {TDRI:'inst',CUSRI:'inst',IPSR:'inst',Deloitte:'firm',PwC:'firm',McKinsey:'firm'};
+const ICI='<svg class="ki" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8v2h20V8L12 3zM4 12v6h3v-6H4zm6.5 0v6h3v-6h-3zM17 12v6h3v-6h-3zM2 20v2h20v-2H2z"/></svg>', ICF='<svg class="ki" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v4h20V9a2 2 0 0 0-2-2h-3V5a2 2 0 0 0-2-2H9zm0 2h6v2H9V5zM2 15v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4h-8v2h-4v-2H2z"/></svg>';
+const LOC={TDRI:'วังทองหลาง กรุงเทพฯ',CUSRI:'จุฬาฯ ปทุมวัน กรุงเทพฯ',IPSR:'ม.มหิดล ศาลายา นครปฐม',Deloitte:'ถนนสาทรใต้ กรุงเทพฯ',PwC:'ถนนสาทรใต้ กรุงเทพฯ',McKinsey:'ถนนวิทยุ กรุงเทพฯ'};
+const ST = {ok:'ยืนยันได้',cond:'หลักฐานบางส่วน',none:'ยังไม่พบหลักฐาน'};
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dimShort = d => d.replace(/^\d+\.\s*/,'');
+const refHTML = l => `<div class="ref"><a href="${esc(l.u)}" target="_blank" rel="noopener">${esc(l.t)}</a><span class="url">${esc(l.u)}</span></div>`;
+
+/* overview */
+const NOTE={TDRI:'งานกับกระทรวงแรงงานที่พบเป็นปี 2558',CUSRI:'ยังไม่พบงานที่กระทรวงแรงงานจ้าง',IPSR:'กระทรวงแรงงานร่วมประชุม ไม่ใช่ผู้ว่าจ้าง',
+  Deloitte:'ยังไม่พบงานกับกระทรวงแรงงานหรือหน่วยงานรัฐ',PwC:'ยังไม่พบงานกับกระทรวงแรงงานหรือหน่วยงานรัฐ',McKinsey:'ข้อมูลส่วนใหญ่มาจากเว็บไซต์บริษัทเอง'};
+let ovKind='all', mxKind='all';
+const ents=()=>D.ents.filter(e=>mxKind==='all'||KIND[e.short]===mxKind);
+function renderCards(){
+  document.getElementById('ocards').innerHTML=D.ents.filter(e=>ovKind==='all'||KIND[e.short]===ovKind).map(e=>{
+    const ok=e.cells.map((c,i)=>({c,i})).filter(x=>x.i>0&&x.c.st!=='none');
+    return `<article class="oc">
+      <div class="ochead"><button class="ocname" data-org="${e.short}" aria-label="ข้อมูลติดต่อและผลงาน ${esc(e.short)}">${esc(e.short)}</button><span class="kind">${KIND[e.short]==='inst'?ICI+'สถาบันวิจัย':ICF+'บริษัทที่ปรึกษา'}</span></div>
+      <div class="ocloc"><svg class="ki" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>ที่ตั้ง: ${esc(LOC[e.short])}</div>
+      <button class="ocstrength" data-e="${e.short}" data-i="0">${esc(e.cells[0].sum)}</button>
+      <ul class="oclist">${ok.map(x=>`<li>${x.c.st==='none'?`<div class="ocrow"><span class="ock">${esc(dimShort(D.dims[x.i]))}</span><span class="ocv nil">- (ยังไม่พบหลักฐาน)</span></div>`:`<button data-e="${e.short}" data-i="${x.i}"><span class="ock">${esc(dimShort(D.dims[x.i]))}</span><span class="ocv">${esc(x.c.sum)}${x.c.st==='cond'?' <span class="condtag">หลักฐานบางส่วน</span>':''}</span></button>`}</li>`).join('')}</ul>
+      <div class="ocnote">ข้อควรรู้: ${esc(NOTE[e.short])}</div>
+    </article>`}).join('')+`<article class="oc ccard"><h3 class="cchead">จำนวนลูกค้า/ผู้ว่าจ้างที่ระบุชื่อได้</h3><div id="clientChart"></div></article>`;
+  renderClientChart();
+}
+document.querySelector('#v-overview').addEventListener('click',ev=>{
+  const k=ev.target.closest('[data-kind]'); if(k){ovKind=k.dataset.kind; document.querySelectorAll('[data-kind]').forEach(x=>x.setAttribute('aria-pressed',x===k)); renderCards(); return;}
+  const h=ev.target.closest('[data-org]'); if(h){openModal(h.dataset.org); return;}
+  const b=ev.target.closest('button[data-e]'); if(b){sel={e:b.dataset.e,i:+b.dataset.i}; openCell();}
+});
+document.querySelector('#v-matrix').addEventListener('click',ev=>{
+  const k=ev.target.closest('[data-mkind]'); if(k){mxKind=k.dataset.mkind; document.querySelectorAll('[data-mkind]').forEach(x=>x.setAttribute('aria-pressed',x===k)); renderMatrix(); renderMobile(); return;}
+  const h=ev.target.closest('[data-org]'); if(h){openModal(h.dataset.org);}
+});
+
+function openModal(short){
+  const e=D.ents.find(x=>x.short===short), c=X.contacts.find(x=>x.e===short), L=X.legal[short];
+  const works=X.timeline.filter(t=>t.e===short);
+  document.getElementById('mBody').innerHTML=`<span class="kind">${KIND[short]==='inst'?ICI+'สถาบันวิจัย':ICF+'บริษัทที่ปรึกษา'}</span>
+   <h2 id="mTitle">${esc(e.name)}</h2>
+   <h3>ข้อมูลติดต่อ</h3><div>${c.rows.map(r=>`<div class="crow"><span class="lbl">${esc(r[0])}</span><span class="val">${/^https?:/.test(r[1])?`<a href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[1])}</a>`:esc(r[1])}</span><button class="copy" data-copy="${esc(r[1])}">คัดลอก</button></div>`).join('')}</div>
+   <h3>สถานะนิติบุคคลและข้อควรระวัง</h3><div class="legal"><b>${esc(L.status)}</b><br>${esc(L.note)}</div>
+   <h3>ผลงานที่ยืนยันได้</h3><ul class="mworks">${works.map(w=>`<li><b>${esc(w.y)}</b> ${esc(w.t)}<div class="ref"><a href="${esc(w.u)}" target="_blank" rel="noopener">แหล่งอ้างอิง</a><span class="url">${esc(w.u)}</span></div></li>`).join('')}</ul>`;
+  showModal();
+}
+let lastFocus=null;
+function showModal(){
+  const m=document.getElementById('modal'); lastFocus=document.activeElement;
+  m.hidden=false; document.body.classList.add('noscroll');
+  m.querySelector('.mbox').scrollTop=0; document.getElementById('mClose').focus();
+}
+function closeModal(){
+  const m=document.getElementById('modal'); if(m.hidden) return;
+  m.hidden=true; document.body.classList.remove('noscroll'); if(lastFocus&&lastFocus.focus) lastFocus.focus();
+}
+document.getElementById('mClose').addEventListener('click',closeModal);
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeModal();});
+document.getElementById('modal').addEventListener('click',async ev=>{
+  if(ev.target.id==='modal'){closeModal();return;}
+  const b=ev.target.closest('.copy'); if(!b) return;
+  try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='คัดลอกแล้ว';}catch(e){b.textContent='คัดลอกไม่ได้';}
+  setTimeout(()=>b.textContent='คัดลอก',1500);
+});
+
+/* matrix */
+let sel={e:'IPSR',i:3};
+function renderMatrix(){
+  const t=document.getElementById('mtx');
+  t.innerHTML = `<thead><tr><th scope="col">มิติการประเมิน</th>${ents().map(e=>`<th scope="col"><button class="orgbtn" data-org="${e.short}">${esc(e.short)} <span aria-hidden="true">ⓘ</span></button></th>`).join('')}</tr></thead><tbody>`+
+    D.dims.map((d,i)=>`<tr><th scope="row">${esc(d)}</th>${ents().map(e=>{const c=e.cells[i];
+      if(c.st==='none') return `<td class="st-none"><span class="nil">-</span></td>`;
+      return `<td class="${sel.e===e.short&&sel.i===i?'sel':''}"><button data-e="${e.short}" data-i="${i}" aria-label="${esc(e.short+' '+d)}"><span class="cellsum">${esc(c.sum)}</span>${c.links[0]?`<span class="refline">อ้างอิง: ${esc(c.links[0].t)}</span>`:''}</button></td>`}).join('')}</tr>`).join('')+'</tbody>';
+}
+function renderMobile(){
+  document.getElementById('mtxMobile').innerHTML=D.dims.map((d,i)=>`<section class="mdim"><h3>${esc(d)}</h3><ul>${ents().map(e=>{const c=e.cells[i];
+    return `<li><button class="ment orgbtn" data-org="${e.short}">${esc(e.short)}</button>${c.st==='none'?'<span class="nil">-</span>':`<button data-e="${e.short}" data-i="${i}"><span class="cellsum">${esc(c.sum)}</span>${c.links[0]?`<span class="refline">อ้างอิง: ${esc(c.links[0].t)}</span>`:''}</button>`}</li>`}).join('')}</ul></section>`).join('');
+}
+
+const CLIENTN={TDRI:6,CUSRI:1,IPSR:3,Deloitte:1,PwC:0,McKinsey:1};
+const CLIENTNOTE={McKinsey:'pro bono'};
+let ccSort='orig', ccKind='all';
+const CI=()=>D.dims.findIndex(d=>d.includes('ลูกค้า'));
+function ccNames(k){const c=D.ents.find(e=>e.short===k).cells[CI()];return c.st==='none'?[]:c.lines.filter(l=>!l.startsWith('หมายเหตุ')).map(l=>l.split(':')[0].trim());}
+function renderClientChart(){
+  const box=document.getElementById('clientChart'); if(!box) return;
+  let ents=D.ents.map(e=>e.short);
+  const mx=Math.max(...D.ents.map(e=>CLIENTN[e.short]),1);
+  box.innerHTML=`<div class="cchart">${ents.map(k=>{const n=CLIENTN[k],names=ccNames(k);return `<button class="ccrow" data-cc="${k}" aria-label="${esc(k)} ${n} ราย แตะเพื่อดูหลักฐาน">
+      <span class="cclbl">${esc(k)}</span>
+      <span class="cctrack"><span class="ccbar" data-w="${n/mx*100}" style="width:0"></span></span>
+      <span class="ccval">${n===0?'-':n}${CLIENTNOTE[k]?` <small>(${CLIENTNOTE[k]})</small>`:''}</span>
+      <span class="cctip">${names.length?names.map(x=>esc(x)).join(' · '):'ยังไม่พบลูกค้าที่ระบุชื่อได้'}<em>แตะเพื่อดูหลักฐานและ URL</em></span>
+    </button>`}).join('')}</div>
+  <p class="ccnote">ชี้หรือแตะแท่งเพื่อดูรายชื่อ แตะอีกครั้งเพื่อเปิดหลักฐาน · นับเฉพาะหน่วยงานที่มีหลักฐานเผยแพร่ต่อสาธารณะ ไม่ใช่จำนวนลูกค้าทั้งหมด</p>`;
+  void box.offsetWidth; setTimeout(()=>box.querySelectorAll('.ccbar').forEach(b=>b.style.width=b.dataset.w+'%'),30);
+}
+document.addEventListener('click',ev=>{
+  const box=document.getElementById('clientChart'); if(!box||!box.contains(ev.target)) return;
+    const r=ev.target.closest('[data-cc]'); if(!r) return;
+  const touch=matchMedia('(hover:none)').matches;
+  if(touch&&!r.classList.contains('open')){box.querySelectorAll('.ccrow.open').forEach(x=>x.classList.remove('open'));r.classList.add('open');return;}
+  sel={e:r.dataset.cc,i:CI()}; openCell();
+});
+function openCell(){
+  const e=D.ents.find(x=>x.short===sel.e), c=e.cells[sel.i];
+  document.getElementById('mBody').innerHTML=`<div><span class="pill p-${c.st}">${ST[c.st]}</span></div>
+    <h2 id="mTitle">${esc(e.short)} · ${esc(D.dims[sel.i])}</h2>
+    <p class="sub">${esc(e.name)}</p>
+    <h3>หลักฐานที่พบ</h3><ul>${c.lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>
+    ${c.links.length?`<h3>แหล่งอ้างอิง</h3><div class="refs">${c.links.map(refHTML).join('')}</div>`:''}`;
+  showModal();
+}
+function selectCell(e,i){sel={e,i};renderMatrix();openCell();}
+['mtx','mtxMobile'].forEach(id=>document.getElementById(id).addEventListener('click',ev=>{const b=ev.target.closest('button[data-e]');if(b&&!ev.target.closest('[data-org]'))selectCell(b.dataset.e,+b.dataset.i);}));
+
+/* timeline */
+const YEARS=['2565','2566','2567','2568','2569'];
+let tlSel=-1;
+function renderTL(){
+  const ents=D.ents.map(e=>e.short);
+  document.getElementById('tlTable').innerHTML=`<thead><tr><th scope="col">ปี พ.ศ.</th>${ents.map(n=>`<th scope="col">${n}</th>`).join('')}</tr></thead><tbody>`+
+   YEARS.map(y=>`<tr><th scope="row" class="yr">${y}</th>${ents.map(n=>{
+     const its=X.timeline.map((t,k)=>({t,k})).filter(o=>o.t.e===n&&o.t.y===y);
+     if(!its.length) return `<td><span class="nil">-</span></td>`;
+     return `<td><ul class="tlcell">${its.map(o=>`<li><button data-k="${o.k}" class="${o.k===tlSel?'on':''}">${esc(o.t.s)}</button></li>`).join('')}</ul></td>`;}).join('')}</tr>`).join('')+'</tbody>';
+}
+function openWork(k){
+  const t=X.timeline[k];
+  document.getElementById('mBody').innerHTML=`<div class="tl-head"><span class="tag">${esc(t.e)}</span><span class="kind">ปี ${esc(t.y)}</span><span class="kind">${esc(t.k)}</span></div>
+    <h2 id="mTitle">${esc(t.t)}</h2><p>${esc(t.d)}</p><h3>แหล่งอ้างอิง</h3>${refHTML({t:t.t,u:t.u})}`;
+  showModal();
+}
+document.getElementById('tlTable').addEventListener('click',ev=>{const b=ev.target.closest('button[data-k]');if(b){tlSel=+b.dataset.k;renderTL();openWork(tlSel);}});
+
+/* contacts */
+function renderContacts(){
+  document.getElementById('contacts').innerHTML=X.contacts.map(c=>`<article class="card"><div class="top"><h3>${esc(c.full)}</h3><span class="kind">${esc(c.e)}</span></div>
+    <div>${c.rows.map(r=>`<div class="crow"><span class="lbl">${esc(r[0])}</span><span class="val">${/^https?:/.test(r[1])?`<a href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[1])}</a>`:esc(r[1])}</span><button class="copy" data-copy="${esc(r[1])}">คัดลอก</button>${r[2]?`<span class="note">${esc(r[2])}</span>`:''}</div>`).join('')}</div>
+    <div class="legal"><b>สถานะนิติบุคคล:</b> ${esc(X.legal[c.e].status)}<br>${esc(X.legal[c.e].note)}</div>
+    ${refHTML({t:'แหล่งที่มาของข้อมูลติดต่อ',u:c.src})}</article>`).join('');
+}
+document.getElementById('contacts').addEventListener('click',async ev=>{
+  const b=ev.target.closest('.copy'); if(!b) return;
+  try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='คัดลอกแล้ว';}catch(e){b.textContent='คัดลอกไม่ได้';}
+  setTimeout(()=>b.textContent='คัดลอก',1500);
+});
+
+/* sources */
+const SRC=(()=>{const m=new Map();
+  D.ents.forEach(e=>e.cells.forEach((c,i)=>c.links.forEach(l=>{const k=l.u;if(!m.has(k))m.set(k,{t:l.t,u:l.u,use:new Set()});m.get(k).use.add(e.short+': '+dimShort(D.dims[i]));})));
+  X.timeline.forEach(t=>{if(!m.has(t.u))m.set(t.u,{t:t.t,u:t.u,use:new Set()});m.get(t.u).use.add(t.e+': ผลงานปี '+t.y);});
+  X.contacts.forEach(c=>{if(!m.has(c.src))m.set(c.src,{t:'ข้อมูลติดต่อ '+c.e,u:c.src,use:new Set()});m.get(c.src).use.add(c.e+': ข้อมูลติดต่อ');});
+  return [...m.values()];})();
+function renderSources(q=''){
+  q=q.trim().toLowerCase();
+  const rows=SRC.filter(s=>!q||(s.t+' '+s.u+' '+[...s.use].join(' ')).toLowerCase().includes(q));
+  document.getElementById('srcTable').innerHTML=`<thead><tr><th>#</th><th>แหล่งอ้างอิง และ URL</th><th>ใช้ยืนยันเรื่อง</th></tr></thead><tbody>`+
+    (rows.map((s,i)=>`<tr><td>${i+1}</td><td>${refHTML(s)}</td><td>${[...s.use].map(esc).join('<br>')}</td></tr>`).join('')||`<tr><td colspan="3" class="empty">ไม่พบแหล่งที่ตรงกับคำค้น</td></tr>`)+'</tbody>';
+}
+document.getElementById('q').addEventListener('input',e=>renderSources(e.target.value));
+
+/* routing */
+const VIEWS=['overview','matrix','timeline','contacts','sources'];
+function route(){
+  const hv=location.hash.slice(1);
+  const v=VIEWS.includes(hv)?hv:'overview';
+  VIEWS.forEach(n=>document.getElementById('v-'+n).hidden=n!==v);
+  document.querySelectorAll('nav a').forEach(a=>a.toggleAttribute('aria-current',a.getAttribute('href')==='#'+v)||a.removeAttribute('aria-current'));
+  document.querySelectorAll('nav a').forEach(a=>{if(a.getAttribute('href')==='#'+v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+}
+window.addEventListener('hashchange',route);
+
+
+renderCards();renderClientChart();renderMatrix();renderMobile();renderTL();renderContacts();renderSources();route();
+</script>
+</body>
+</html>
